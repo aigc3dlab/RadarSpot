@@ -5,11 +5,11 @@
 <title>雷达探点Pro</title>
 <style type="text/css">
 body {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
     min-height: 100vh;
     margin: 0;
     padding: 20px;
-    color: #e2e8f0;
+    color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -23,19 +23,18 @@ body {
 }
 
 .control-panel {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(148, 163, 184, 0.1);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 
-        0 8px 32px 0 rgba(0, 0, 0, 0.2),
-        inset 0 0 32px rgba(148, 163, 184, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 16px;
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 0 32px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 15px;
     padding: 25px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    cursor: default !important;
 }
 
 .control-panel::before {
@@ -54,11 +53,11 @@ body {
 }
 
 .control-group {
-    background: rgba(51, 65, 85, 0.4);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 10px;
     padding: 15px;
     margin-bottom: 20px;
     display: flex;
@@ -76,10 +75,10 @@ body {
 }
 
 input[type="text"] {
-    background: rgba(51, 65, 85, 0.5);
-    border: 2px solid rgba(148, 163, 184, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: #e2e8f0;
+    color: rgba(255, 255, 255, 0.9);
     padding: 8px 12px;
     width: 40px;
     font-weight: bold;
@@ -88,13 +87,12 @@ input[type="text"] {
     text-align: center;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 input[type="text"]:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
-    background: rgba(51, 65, 85, 0.7);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
     outline: none;
 }
 
@@ -141,53 +139,58 @@ input[type="checkbox"] {
 
 button {
     background: linear-gradient(135deg, 
-        #4f46e5,  /* 靛蓝色 */
-        #6366f1   /* 紫色 */
+        rgba(147, 112, 219, 0.8),  /* 浅紫色 */
+        rgba(106, 90, 205, 0.9)    /* 深紫色 */
     );
-    border: none;
-    color: #ffffff;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: white;
     border-radius: 8px;
     padding: 10px 20px;
     font-size: 14px;
+    font-weight: 500;
     letter-spacing: 0.5px;
+    transition: all 0.3s ease;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
 }
 
 button:hover {
     background: linear-gradient(135deg,
-        #6366f1,   /* 紫色 */
-        #818cf8    /* 浅紫色 */
+        rgba(106, 90, 205, 0.9),   /* 深紫色 */
+        rgba(147, 112, 219, 0.8)   /* 浅紫色 */
     );
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 20px rgba(147, 112, 219, 0.3);
 }
 
 button:active {
     transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 2px 10px rgba(147, 112, 219, 0.2);
 }
 
 button[disabled] {
-    background: linear-gradient(135deg, #475569, #64748b);
+    background: linear-gradient(135deg, #555, #444);
+    cursor: not-allowed;
+    transform: none;
     box-shadow: none;
 }
 
 #tips {
-    background: rgba(51, 65, 85, 0.5);
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 10px 15px;
-    color: #e2e8f0;
+    color: rgba(255, 255, 255, 0.9);
     width: 300px;
     font-weight: 500;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.1),
-        inset 0 0 32px rgba(148, 163, 184, 0.05);
+        inset 0 0 32px rgba(255, 255, 255, 0.05);
     text-align: center;
 }
 
@@ -197,11 +200,11 @@ button[disabled] {
 }
 
 #message {
-    background: rgba(51, 65, 85, 0.5);
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
     border-radius: 8px;
     padding: 15px;
-    color: #e2e8f0;
+    color: rgba(255, 255, 255, 0.9);
     width: 1800px !important;
     height: 300px !important;
     line-height: 1.5;
@@ -211,7 +214,7 @@ button[disabled] {
     -webkit-backdrop-filter: blur(4px);
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.1),
-        inset 0 0 32px rgba(148, 163, 184, 0.05);
+        inset 0 0 32px rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
@@ -245,14 +248,13 @@ button[disabled] {
     position: absolute;
     width: 20px;
     height: 20px;
-    border: 2px solid rgba(226, 232, 240, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
     pointer-events: none;
     transform: translate(-50%, -50%);
     z-index: 1000;
     display: none;
     transition: border-color 0.1s ease;
-    box-shadow: 0 0 10px rgba(226, 232, 240, 0.3);
 }
 
 canvas {
@@ -384,10 +386,10 @@ function drawLine(ctx, x, y) {
 /* 选中状态使用紫色渐变 */
 #colorLength:checked, #gridLine:checked {
     background: linear-gradient(135deg, 
-        #4f46e5,  /* 靛蓝色 */
-        #6366f1   /* 紫色 */
+        rgba(147, 112, 219, 0.8),  /* 浅紫色 */
+        rgba(106, 90, 205, 0.9)    /* 深紫色 */
     );
-    border-color: rgba(148, 163, 184, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 #colorLength:checked::after, #gridLine:checked::after {
@@ -408,23 +410,6 @@ function drawLine(ctx, x, y) {
     align-items: center;
     gap: 12px;
 }
-
-/* 确保控制面板内的所有元素都显示正确的鼠标指针 */
-.control-panel * {
-    cursor: auto !important;
-}
-
-/* 保持按钮和输入框的指针样式 */
-.control-panel button,
-.control-panel input[type="checkbox"],
-.control-panel label {
-    cursor: pointer !important;
-}
-
-/* 保持文本输入框的指针样式 */
-.control-panel input[type="text"] {
-    cursor: text !important;
-}
 </style>
 <style id="__web-inspector-hide-shortcut-style__">
 .__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after
@@ -442,19 +427,19 @@ function drawLine(ctx, x, y) {
         <div class="control-group">
             <div class="control-item">
                 <label>点数量：</label>
-                <input type='text' id='pointNum' value="200">
+                <input type='text' id='pointNum' value="500">
             </div>
             <div class="control-item">
                 <label>可视角：</label>
-                <input type='text' id='angle' value="90">
+                <input type='text' id='angle' value="30">
             </div>
             <div class="control-item">
                 <label>速度：</label>
-                <input type='text' id='speed' value="0.5">
+                <input type='text' id='speed' value="0.3">
             </div>
             <div class="control-item">
                 <label>点大小：</label>
-                <input type='text' id='pointSize' value="10">
+                <input type='text' id='pointSize' value="5">
             </div>
             <div class="control-item">
                 <label>彩色点：</label>
@@ -517,7 +502,7 @@ var point = [];
 var pointSize = 2.5;
 var pointNum = 10;
 var hide = 0;
-var colorLength = 1, color = ['#e2e8f0', '#10b981', '#3b82f6', '#ef4444', '#f59e0b'];  // 白、绿、蓝、红、橙
+var colorLength = 1, color = ['white', 'green', 'blue', 'red', 'yellow']; // purple，此处修改彩色点的其他颜色
 var speed = 1, angle = 35, ang = 0, radius = 380;
 var btRetry, btMessage;
 var raf, find = false;
@@ -664,18 +649,6 @@ window.onload = function(){
 function main(){
     return new Promise((resolve, reject) => {
         try {
-            // 计算理论最大可容纳的点数量
-            const availableArea = Math.PI * (radius - pointSize) * (radius - pointSize);
-            const pointArea = Math.PI * (pointSize * 2) * (pointSize * 2); // 考虑间隙
-            const maxPossiblePoints = Math.floor(availableArea / pointArea * 0.7); // 留30%空间作为缓冲
-            
-            // 如果设置的点数量超过理论最大值，自动调整
-            if (pointNum > maxPossiblePoints) {
-                console.warn(`点数量 ${pointNum} 超过最大可能值 ${maxPossiblePoints}，已自动调整`);
-                pointNum = maxPossiblePoints;
-                document.querySelector('#pointNum').value = maxPossiblePoints;
-            }
-            
             // 处理网格线显示
             if (document.querySelector('#gridLine').checked){
                 ctxL.clearRect(0, 0, 1800, 900);
@@ -735,9 +708,6 @@ function main(){
                     clearInterval(draw);
                     pointData1 = ctxP.getImageData(0, 0, 900, 900);
                     pointData2 = ctxP.getImageData(900, 0, 900, 900);
-                    if (k < document.querySelector('#pointNum').value * 1) {
-                        tips.value = `由于空间限制，仅生成了 ${k} 个点`;
-                    }
                     resolve();
                 }
             }, 30);
@@ -795,29 +765,21 @@ function drawLine(ctx, x, y) {
     
     ctx.restore();
 }
-function drawPoint(ctx, x, y, c){
+function drawPoint(ctx, x,y,c){
     let tmpc = c;
     ctx.fillStyle = color[c];
-    
-    // 左侧圆形点
-    ctx.beginPath();
-    ctx.arc(450 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillRect(450+x,450+y, pointSize,pointSize);
     
     if (hide != point.length) {
-        // 右侧正常点
-        ctx.beginPath();
-        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-        ctx.fill();
+        // 正常点
+        ctx.fillRect(1350+x,450+y, pointSize,pointSize);
     } else if (document.querySelector('#colorLength').checked) {
-        // 右侧彩色差异点
+        // 彩色差异点
         do {
             tmpc = Math.floor(Math.random() * colorLength);
         } while (tmpc == c)
         ctx.fillStyle = color[tmpc];
-        ctx.beginPath();
-        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillRect(1350+x,450+y, pointSize,pointSize);
     }
 }
 function drawCircle(ctx,x,y,Radius,c){
