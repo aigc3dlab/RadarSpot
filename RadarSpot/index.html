@@ -35,6 +35,7 @@ body {
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    cursor: default !important;
 }
 
 .control-panel::before {
@@ -410,6 +411,23 @@ function drawLine(ctx, x, y) {
     align-items: center;
     gap: 12px;
 }
+
+/* 确保控制面板内的所有元素都显示正确的鼠标指针 */
+.control-panel * {
+    cursor: auto !important;
+}
+
+/* 保持按钮和输入框的指针样式 */
+.control-panel button,
+.control-panel input[type="checkbox"],
+.control-panel label {
+    cursor: pointer !important;
+}
+
+/* 保持文本输入框的指针样式 */
+.control-panel input[type="text"] {
+    cursor: text !important;
+}
 </style>
 <style id="__web-inspector-hide-shortcut-style__">
 .__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after
@@ -427,19 +445,19 @@ function drawLine(ctx, x, y) {
         <div class="control-group">
             <div class="control-item">
                 <label>点数量：</label>
-                <input type='text' id='pointNum' value="500">
+                <input type='text' id='pointNum' value="200">
             </div>
             <div class="control-item">
                 <label>可视角：</label>
-                <input type='text' id='angle' value="30">
+                <input type='text' id='angle' value="90">
             </div>
             <div class="control-item">
                 <label>速度：</label>
-                <input type='text' id='speed' value="0.3">
+                <input type='text' id='speed' value="0.5">
             </div>
             <div class="control-item">
                 <label>点大小：</label>
-                <input type='text' id='pointSize' value="5">
+                <input type='text' id='pointSize' value="10">
             </div>
             <div class="control-item">
                 <label>彩色点：</label>
@@ -649,6 +667,18 @@ window.onload = function(){
 function main(){
     return new Promise((resolve, reject) => {
         try {
+            // 计算理论最大可容纳的点数量
+            const availableArea = Math.PI * (radius - pointSize) * (radius - pointSize);
+            const pointArea = Math.PI * (pointSize * 2) * (pointSize * 2); // 考虑间隙
+            const maxPossiblePoints = Math.floor(availableArea / pointArea * 0.7); // 留30%空间作为缓冲
+            
+            // 如果设置的点数量超过理论最大值，自动调整
+            if (pointNum > maxPossiblePoints) {
+                console.warn(`点数量 ${pointNum} 超过最大可能值 ${maxPossiblePoints}，已自动调整`);
+                pointNum = maxPossiblePoints;
+                document.querySelector('#pointNum').value = maxPossiblePoints;
+            }
+            
             // 处理网格线显示
             if (document.querySelector('#gridLine').checked){
                 ctxL.clearRect(0, 0, 1800, 900);
@@ -708,6 +738,9 @@ function main(){
                     clearInterval(draw);
                     pointData1 = ctxP.getImageData(0, 0, 900, 900);
                     pointData2 = ctxP.getImageData(900, 0, 900, 900);
+                    if (k < document.querySelector('#pointNum').value * 1) {
+                        tips.value = `由于空间限制，仅生成了 ${k} 个点`;
+                    }
                     resolve();
                 }
             }, 30);
@@ -765,21 +798,29 @@ function drawLine(ctx, x, y) {
     
     ctx.restore();
 }
-function drawPoint(ctx, x,y,c){
+function drawPoint(ctx, x, y, c){
     let tmpc = c;
     ctx.fillStyle = color[c];
-    ctx.fillRect(450+x,450+y, pointSize,pointSize);
+    
+    // 左侧圆形点
+    ctx.beginPath();
+    ctx.arc(450 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+    ctx.fill();
     
     if (hide != point.length) {
-        // 正常点
-        ctx.fillRect(1350+x,450+y, pointSize,pointSize);
+        // 右侧正常点
+        ctx.beginPath();
+        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+        ctx.fill();
     } else if (document.querySelector('#colorLength').checked) {
-        // 彩色差异点
+        // 右侧彩色差异点
         do {
             tmpc = Math.floor(Math.random() * colorLength);
         } while (tmpc == c)
         ctx.fillStyle = color[tmpc];
-        ctx.fillRect(1350+x,450+y, pointSize,pointSize);
+        ctx.beginPath();
+        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 function drawCircle(ctx,x,y,Radius,c){
