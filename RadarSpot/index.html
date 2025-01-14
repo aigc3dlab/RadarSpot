@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang='zh-cmn-Hans'>
+<head>
+<meta charset='utf-8' />
+<title>雷达探点Pro</title>
+<style type="text/css">
+body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    cursor: none !important;
+}
+
+.control-panel {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.2),
+        inset 0 0 32px rgba(148, 163, 184, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: default !important;
+}
+
+.control-panel::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0) 70%
+    );
+    pointer-events: none;
+}
+
+.control-group {
+    background: rgba(51, 65, 85, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+input[type="text"] {
+    background: rgba(51, 65, 85, 0.5);
+    border: 2px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    color: #e2e8f0;
+    padding: 8px 12px;
+    width: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"]:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+    background: rgba(51, 65, 85, 0.7);
+    outline: none;
+}
+
+input[type="checkbox"] {
+    display: inline-block !important;
+}
+
+.control-item label {
+    position: relative;
+    padding-left: 0;
+    cursor: pointer;
+    display: inline-block;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.control-item label::before,
+.control-item label::after {
+    display: none !important;
+}
+
+.control-item input[type="checkbox"]:checked + label:before {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.control-item label:after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.control-item input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
+button {
+    background: linear-gradient(135deg, 
+        #4f46e5,  /* 靛蓝色 */
+        #6366f1   /* 紫色 */
+    );
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: linear-gradient(135deg,
+        #6366f1,   /* 紫色 */
+        #818cf8    /* 浅紫色 */
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+}
+
+button[disabled] {
+    background: linear-gradient(135deg, #475569, #64748b);
+    box-shadow: none;
+}
+
+#tips {
+    background: rgba(51, 65, 85, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: #e2e8f0;
+    width: 300px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 32px rgba(148, 163, 184, 0.05);
+    text-align: center;
+}
+
+#tips[readonly] {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#message {
+    background: rgba(51, 65, 85, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    color: #e2e8f0;
+    width: 1800px !important;
+    height: 300px !important;
+    line-height: 1.5;
+    margin: 20px auto;
+    resize: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 32px rgba(148, 163, 184, 0.05);
+    transition: all 0.3s ease;
+}
+
+/* 隐藏状态的样式 */
+#message.__web-inspector-hide-shortcut__ {
+    height: 0 !important;
+    opacity: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.canvas-container {
+    position: relative;
+    margin-top: 20px;
+    width: 1800px;
+    height: 900px;
+    margin: 0 auto;
+    cursor: none !important;
+}
+
+#canvasL, #canvasP {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: none !important;
+}
+
+/* 优化自定义光标样式 */
+#cursor {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: none;
+    transition: border-color 0.1s ease;
+    box-shadow: 0 0 10px rgba(226, 232, 240, 0.3);
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+}
+
+#canvasL {
+    z-index: 1;
+}
+
+#canvasP {
+    z-index: 2;
+}
+
+/* 确保页面其他部分也不显示鼠标指针 */
+.container {
+    cursor: none !important;
+}
+
+/* 确保按钮等交互元素保持默认指针 */
+button, input, select {
+    cursor: pointer !important;
+}
+
+/* 标签文本样式 */
+label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    padding-left: 0;
+}
+
+/* 移除复选框前的小方框样式 */
+.control-group:first-child .control-item::before {
+    display: none;
+}
+
+/* 自定义复选框样式 */
+.control-group:nth-child(2) .control-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 恢复第二组控制项（彩色点和雷达线）的复选框 */
+.control-group:nth-child(2) input[type="checkbox"] {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* 复选框选中状态样式 */
+.control-group:nth-child(2) input[type="checkbox"]:checked {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 第一组控制项（点数量等）保持隐藏复选框 */
+.control-group:first-child input[type="checkbox"] {
+    display: none;
+}
+
+/* 标签样式保持不变 */
+label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* 修改刻度标识字母样式 */
+.scale-letters {
+    font-weight: normal;  /* 移除粗体 */
+    fill: rgba(255, 255, 255, 0.7);  /* 使用半透明白色 */
+    font-size: 14px;
+}
+
+/* 修改绘制刻度标识的函数中的字体样式 */
+function drawLine(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // 绘制刻度标识
+    ctx.font = '14px sans-serif';  /* 移除粗体设置 */
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    
+    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
+    
+    for (var i = 0; i < 24; i++) {
+        const angle = i * 15 - 90;
+        const radian = angle * Math.PI / 180;
+        const x = (radius + 25) * Math.cos(radian);
+        const y = (radius + 25) * Math.sin(radian);
+        
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate((angle + 90) * Math.PI / 180);
+        ctx.fillText(letters[i], -5, 5);
+        ctx.restore();
+    }
+    
+    ctx.restore();
+}
+
+/* 专门针对彩色点和雷达线的复选框 */
+#colorLength, #gridLine {
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    vertical-align: middle;
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-block;
+    position: relative;
+}
+
+/* 选中状态使用紫色渐变 */
+#colorLength:checked, #gridLine:checked {
+    background: linear-gradient(135deg, 
+        #4f46e5,  /* 靛蓝色 */
+        #6366f1   /* 紫色 */
+    );
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+#colorLength:checked::after, #gridLine:checked::after {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 6px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* 确保对齐 */
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 确保控制面板内的所有元素都显示正确的鼠标指针 */
+.control-panel * {
+    cursor: auto !important;
+}
+
+/* 保持按钮和输入框的指针样式 */
+.control-panel button,
+.control-panel input[type="checkbox"],
+.control-panel label {
+    cursor: pointer !important;
+}
+
+/* 保持文本输入框的指针样式 */
+.control-panel input[type="text"] {
+    cursor: text !important;
+}
+</style>
+<style id="__web-inspector-hide-shortcut-style__">
+.__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after
+{
+    visibility: hidden !important;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <h1>雷达探点Pro【AIGC_3D视觉实验室】</h1>
+    
+    <div class="control-panel">
+        <div class="control-group">
+            <div class="control-item">
+                <label>点数量：</label>
+                <input type='text' id='pointNum' value="200">
+            </div>
+            <div class="control-item">
+                <label>可视角：</label>
+                <input type='text' id='angle' value="90">
+            </div>
+            <div class="control-item">
+                <label>速度：</label>
+                <input type='text' id='speed' value="0.5">
+            </div>
+            <div class="control-item">
+                <label>点大小：</label>
+                <input type='text' id='pointSize' value="10">
+            </div>
+            <div class="control-item">
+                <label>彩色点：</label>
+                <input type='checkbox' id='colorLength'>
+            </div>
+            <div class="control-item">
+                <label>雷达线：</label>
+                <input type='checkbox' id='gridLine' checked>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <button id='btRetry'>开始游戏</button>
+            <button id='btMessage'>使用教程</button>
+            <input id='tips' value='等待开始' readonly>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <div id="cursor"></div>
+        <canvas id='canvasL' width='1800' height='900'></canvas>
+        <canvas id='canvasP' width='1800' height='900'></canvas>
+    </div>
+
+    <textarea id='message' readonly>
+声明：
+    本游戏由AIGC_3D视觉实验室基于开源项目二次开发，仅供学习。
+
+功能：
+    支持调整随机点数量，可视角度，速度和点大小，调整幅度可为小数，影响程度请自行尝试，使用ctrl+滚轮调整页面大小以适应自己的观察习惯
+
+规则：
+    非彩色点：找到仅存在左边不存在右边的点
+    彩色点：找到左右两边唯一一个颜色不同的点
+
+使用介绍：
+    配置好参数后，点击开始游戏
+    等待生成完成后自动开始扫描
+    点击雷达区域外任意位置可暂停/继续扫描
+    扫描暂停后，点击雷达区域内选择差异点
+    点击开始游戏可重新开始游戏
+    成功显示绿色框，失败则显示红色框，黄色框代表系统显示的正确位置
+    点击教程按钮可显示/隐藏本说明
+
+参数说明：
+    点数量：随机生成的点的数量
+    可视角：扫描区域的角度范围
+    速度：扫描的旋转速度
+    点大小：显示点的大小
+    彩色点：启用后点会随机显示不同颜色
+    雷达线：显示或隐藏刻度线
+</textarea>
+    <!-- <p>(x,y)</p> -->
+</div>
+
+<script type="text/javascript">
+var canvasL, ctxL, canvasP, ctxP;
+var pointData1, pointData2;
+var point = [];
+var pointSize = 2.5;
+var pointNum = 10;
+var hide = 0;
+var colorLength = 1, color = ['#e2e8f0', '#10b981', '#3b82f6', '#ef4444', '#f59e0b'];  // 白、绿、蓝、红、橙
+var speed = 1, angle = 35, ang = 0, radius = 380;
+var btRetry, btMessage;
+var raf, find = false;
+var ts, te;
+var scanning = true; // 添加扫描状态变量
+
+window.onload = function(){
+    btRetry = document.querySelector('#btRetry');
+    btMessage = document.querySelector('#btMessage');
+    canvasL = document.querySelector('#canvasL');
+    canvasP = document.querySelector('#canvasP');
+    message = document.querySelector('#message');
+    tips = document.querySelector('#tips');
+    ctxL = canvasL.getContext('2d');
+    ctxP = canvasP.getContext('2d');
+
+    // 修改重新启动按钮的事件处理
+    btRetry.addEventListener('click', function(){
+        // 重置游戏状态
+        scanning = true;
+        find = true;
+        ts = new Date().getTime();
+        ang = 0;
+        
+        // 消当前动画
+        cancelAnimationFrame(raf);
+        
+        // 更新参数，包括彩色点设置
+        pointSize = document.querySelector('#pointSize').value * 1;
+        pointNum = document.querySelector('#pointNum').value * 1;
+        angle = document.querySelector('#angle').value * 1;
+        speed = document.querySelector('#speed').value * 1;
+        colorLength = document.querySelector('#colorLength').checked ? color.length : 1;
+        
+        // 禁用按钮
+        btRetry.setAttribute('disabled', 'disabled');
+        
+        // 更新提示
+        tips.value = "生成中，请稍候...";
+        
+        // 隐藏教程文本
+        message.setAttribute('class', '__web-inspector-hide-shortcut__');
+        message.setAttribute('style', 'height:0px;width:1200px;resize:none;');
+        
+        // 清除画布
+        ctxP.clearRect(0, 0, 1800, 900);
+        ctxL.clearRect(0, 0, 1800, 900);
+        
+        // 重新生成点
+        main().then(() => {
+            // 点生成完成后的回调
+            tips.value = "点击空白区域暂停扫描，次点击选择差异点";
+            canvasP.style.cursor = 'default';
+            
+        // 确保状态正确
+            scanning = true;
+            find = true;
+            
+            // 立即开始动画
+            animation();
+        }).catch(error => {
+            console.error('Game restart failed:', error);
+            tips.value = "游戏启动失败，请新页面重试";
+            btRetry.removeAttribute('disabled');
+        });
+    });
+
+    // 添加教程按钮的事件处理
+    btMessage.addEventListener('click', function(){
+        if (message.getAttribute('class') === '__web-inspector-hide-shortcut__') {
+            // 显示教程
+            message.removeAttribute('class');
+            message.setAttribute('style', 'height:170px;width:1200px;resize:none;');
+        } else {
+            // 隐藏教程
+            message.setAttribute('class', '__web-inspector-hide-shortcut__');
+            message.setAttribute('style', 'height:0px;width:1200px;resize:none;');
+        }
+    });
+
+    // 修改点击事件处理，限制只在 canvas 容器内生效
+    document.querySelector('.canvas-container').addEventListener('click', function(event) {
+        if (!find) return;
+        
+        // 获取点击坐标
+        const rect = canvasP.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        // 检查是否点击在雷达区域外
+        const isLeftRadarArea = isInRadarArea(x, y, 450, 450);
+        const isRightRadarArea = isInRadarArea(x - 900, y, 450, 450);
+        
+        if (!isLeftRadarArea && !isRightRadarArea) {
+            // 点击在雷达区域外
+            if (scanning) {
+                // 暂停扫描
+                scanning = false;
+                cancelAnimationFrame(raf);
+                tips.value = "扫描已暂停，点击空白区域继续扫描";
+                btRetry.removeAttribute('disabled');
+            } else {
+                // 继续扫描
+                scanning = true;
+                tips.value = "点击空白区域暂停扫描，再次点击选择差异点";
+                btRetry.setAttribute('disabled', 'disabled');
+                animation();
+            }
+            return;
+        }
+        
+        // 如果点击在雷达区域内且扫描已停止，则进行差异点选择
+        if (!scanning && (isLeftRadarArea || isRightRadarArea)) {
+            let centerX = x > 900 ? 1350 : 450;
+            let clickX = x - centerX;
+            let clickY = y - 450;
+            
+            let isCorrect = checkClickedPoint(clickX, clickY);
+            drawResultCircles(clickX, clickY, isCorrect);
+            
+            tips.value = "本次游戏结束，点击开始游戏重新开始";
+            btRetry.removeAttribute('disabled'); // 确保再试一次按钮被激活
+            find = false;
+            te = new Date().getTime();
+            
+            if (isCorrect) {
+                alert('找到了！\n用时：' + (te-ts) + ' 毫秒');
+            } else {
+                alert('找到！\n用时：' + (te-ts) + ' 毫秒');
+            }
+        }
+    });
+
+    // 保留网格线件监听器
+    document.querySelector('#gridLine').addEventListener('change', function() {
+        if (!this.checked) {
+            ctxL.clearRect(0, 0, 1800, 900);
+        } else {
+            drawLine(ctxL, 450, 450);
+            drawLine(ctxL, 1350, 450);
+        }
+    });
+}
+function main(){
+    return new Promise((resolve, reject) => {
+        try {
+            // 计算理论最大可容纳的点数量
+            const availableArea = Math.PI * (radius - pointSize) * (radius - pointSize);
+            const pointArea = Math.PI * (pointSize * 2) * (pointSize * 2); // 考虑间隙
+            const maxPossiblePoints = Math.floor(availableArea / pointArea * 0.7); // 留30%空间作为缓冲
+            
+            // 如果设置的点数量超过理论最大值，自动调整
+            if (pointNum > maxPossiblePoints) {
+                console.warn(`点数量 ${pointNum} 超过最大可能值 ${maxPossiblePoints}，已自动调整`);
+                pointNum = maxPossiblePoints;
+                document.querySelector('#pointNum').value = maxPossiblePoints;
+            }
+            
+            // 处理网格线显示
+            if (document.querySelector('#gridLine').checked){
+                ctxL.clearRect(0, 0, 1800, 900);
+                ctxL.strokeStyle = '#345';
+                ctxL.lineWidth = 1;
+                drawLine(ctxL, 450, 450);
+                drawLine(ctxL, 1350, 450);
+            }
+            
+            ctxP.clearRect(0, 0, 1800, 900);
+            ctxP.lineWidth = 1;
+            ctxP.strokeStyle = '#ccc';
+            
+            // 更新彩色点设置
+            if (document.querySelector('#colorLength').checked) {
+                colorLength = color.length;
+            } else {
+                colorLength = 1;
+            }
+            
+            var k = 0;
+            point = [];
+            hide = Math.floor(Math.random() * pointNum);
+            
+            var maxAttempts = 1000; // 防止无限循环
+            
+            var draw = setInterval(function(){
+                var attempts = 0;
+                var x, y;
+                
+                for (var i = 0; i < 30 && k < pointNum; i++) {
+                    attempts = 0;
+                    do {
+                        x = Math.floor(Math.random() * radius * 2 - radius);
+                        y = Math.floor(Math.random() * radius * 2 - radius);
+                        attempts++;
+                        
+                        if (attempts > maxAttempts) {
+                            // 如果尝试次数过多，可能是点密度太高，减少剩余点数
+                            console.warn('Could not place all points with desired spacing');
+                            k = pointNum; // 强制结束
+                            break;
+                        }
+                    } while (!checkPoint(x, y) || !isInScanArea(x, y));
+                    
+                    if (attempts <= maxAttempts) {
+                        var c = Math.floor(Math.random() * colorLength);
+                        if (Math.sqrt(x*x + y*y) <= radius - pointSize) {
+                            k++;
+                            drawPoint(ctxP, x, y, c);
+                            point.push([x, y, c]);
+                        }
+                    }
+                }
+                
+                if (k >= pointNum) {
+                    clearInterval(draw);
+                    pointData1 = ctxP.getImageData(0, 0, 900, 900);
+                    pointData2 = ctxP.getImageData(900, 0, 900, 900);
+                    if (k < document.querySelector('#pointNum').value * 1) {
+                        tips.value = `由于空间限制，仅生成了 ${k} 个点`;
+                    }
+                    resolve();
+                }
+            }, 30);
+            
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+function drawLine(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // 绘制心圆
+    for (var i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+    
+    // 刻度标识
+    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
+    
+    for (var i = 0; i < 24; i++) {
+        const angle = i * 15 - 90;
+        
+        ctx.save();
+        ctx.rotate(angle * Math.PI / 180);
+        
+        // 绘制度线
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(radius + 10, 0);
+        ctx.stroke();
+        
+        // 调字母位置
+        ctx.translate(radius + 25, 0);  // 从55改为25
+        ctx.rotate(-angle * Math.PI / 180);
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = 'bold 18px Arial';
+        ctx.fillText(letters[i], 0, 0);
+        
+        ctx.restore();
+    }
+    
+    // 绘制径向线
+    for (var i = 0; i < 6; i++) {
+        ctx.rotate(Math.PI * 30 / 180);
+        ctx.moveTo(-385, 0);
+        ctx.lineTo(385, 0);
+        ctx.stroke();
+    }
+    
+    ctx.restore();
+}
+function drawPoint(ctx, x, y, c){
+    let tmpc = c;
+    ctx.fillStyle = color[c];
+    
+    // 左侧圆形点
+    ctx.beginPath();
+    ctx.arc(450 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    if (hide != point.length) {
+        // 右侧正常点
+        ctx.beginPath();
+        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (document.querySelector('#colorLength').checked) {
+        // 右侧彩色差异点
+        do {
+            tmpc = Math.floor(Math.random() * colorLength);
+        } while (tmpc == c)
+        ctx.fillStyle = color[tmpc];
+        ctx.beginPath();
+        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+function drawCircle(ctx,x,y,Radius,c){
+    ctx.fillStyle = color[c];
+    ctx.beginPath();
+    ctx.arc(400+x,400+y,Radius,0,Math.PI*2,true);
+    if (hide != point.length)
+        ctx.arc(400+x+850,400+y,Radius,0,Math.PI*2,true);
+    ctx.closePath();
+    ctx.fill();
+}
+function drawArc(ctx, x,y, ang){
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.arc(x,y, radius+10, Math.PI * ang/180, Math.PI * (360-angle + ang)/180);
+    ctx.fill();
+}
+function endDrawArc(ctx, x,y, ang){
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.arc(x,y, radius+10, Math.PI * (ang+angle/2)/180, Math.PI * (360-angle/2 + ang)/180);
+    ctx.fill();
+}
+function checkPoint(x, y) {
+    // 首先检查点是否在圆内
+    if (Math.sqrt(x*x + y*y) > radius - pointSize) {
+        return false;
+    }
+    
+    // 设置点之间的最小间隙
+    const minGap = pointSize * 2;  // 间隙为点大小的2倍
+    
+    // 检查是否与现有点重叠或太近
+    for (let p of point) {
+        const dx = x - p[0];
+        const dy = y - p[1];
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        
+        if (distance < minGap) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+function drawScaleNumbers(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    
+    // 创建字母数组 A-X (24个字母，每15度一个)
+    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
+    
+    // 添加刻度标识 - 每15度一个母
+    for (var i = 0; i < 24; i++) {
+        const angle = i * 15 - 90;
+        
+        ctx.save();
+        ctx.rotate(angle * Math.PI / 180);
+        
+        // 将距离从55减小到25
+        ctx.translate(radius + 25, 0);  // 从55改为25
+        ctx.rotate(-angle * Math.PI / 180);
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = 'bold 18px Arial';
+        ctx.fillText(letters[i], 0, 0);
+        
+        ctx.restore();
+    }
+    
+    ctx.restore();
+}
+function animation(){
+    if (!scanning) {
+        cancelAnimationFrame(raf);
+        return;
+    }
+    
+    try {
+        ctxP.clearRect(0, 0, 1800, 900);
+        
+        if (pointData1 && pointData2) {
+            ctxP.putImageData(pointData1, 0, 0);
+            ctxP.putImageData(pointData2, 900, 0);
+            
+            drawScaleNumbers(ctxP, 450, 450);
+            drawScaleNumbers(ctxP, 1350, 450);
+            
+            drawArc(ctxP, 450, 450, ang);
+            drawArc(ctxP, 1350, 450, ang);
+            
+            ang += speed;
+            
+            // 确保动画继续
+            if (scanning) {
+                raf = requestAnimationFrame(animation);
+            }
+        }
+    } catch (error) {
+        console.error('Animation error:', error);
+        scanning = false;
+        cancelAnimationFrame(raf);
+    }
+}
+function marker(){
+    ctxL.strokeStyle = '#345';
+    ctxL.lineWidth = 1;
+    ctxP.clearRect(0, 0, 1800, 900);
+    
+    // 只在网格线选中时绘制网格
+    if (document.querySelector('#gridLine').checked) {
+        drawLine(ctxL, 450,450);
+        drawLine(ctxL, 1350,450);
+    } else {
+        ctxL.clearRect(0,0, 1800,900);
+    }
+    
+    ctxP.putImageData(pointData1, 0, 0);
+    ctxP.putImageData(pointData2, 900, 0);
+    find = true;
+}
+function result(){
+    ctxP.lineWidth = 3;
+    ctxP.putImageData(pointData1, 0,0);
+    ctxP.putImageData(pointData2, 900,0);
+    ctxP.strokeStyle = 'orange';
+    ctxP.strokeRect(point[pointNum][0]+450-10,point[pointNum][1]+450-10, 20,20);
+    ctxP.strokeRect(point[pointNum][0]+1350-10,point[pointNum][1]+450-10, 20,20);
+    ctxP.strokeStyle = 'red';
+    ctxP.strokeRect(point[hide][0]+450-10,point[hide][1]+450-10, 20,20);
+    ctxP.strokeRect(point[hide][0]+1350-10,point[hide][1]+450-10, 20,20);
+    
+    if ( Math.abs(point[hide][0]-point[pointNum][0])<10 && Math.abs(point[hide][1]-point[pointNum][1])<10 ) {
+        alert('找到了！\n' + '用时：' + (te-ts) + ' 毫秒');
+    } else {
+        alert('误！\n' + '用时：' + (te-ts) + ' 毫秒');
+    }
+}
+function isInScanArea(x, y) {
+    // 计算点原点的角度（弧度）
+    let angle = Math.atan2(y, x);
+    // 转换为度数
+    let degrees = angle * (180 / Math.PI);
+    // 确保角度为正值
+    if (degrees < 0) {
+        degrees += 360;
+    }
+    
+    // 检查点是否在当前描区域内
+    // 这里以根据需要调整角度范围
+    return true;  // 在开发阶段先返回true后可以根据具体需求改
+}
+function drawSectorMask(angle) {
+    const sectorAngle = document.querySelector('#angle').value * 1 || 30; // 使用设置的角度值
+    
+    // 先清除整个画布
+    ctxP.clearRect(0, 0, 1800, 900);
+    
+    // 重新绘制所有点
+    ctxP.putImageData(pointData1, 0, 0);
+    ctxP.putImageData(pointData2, 900, 0);
+    
+    // 创建遮罩，遮住所有区域除了扇形
+    ctxP.fillStyle = 'rgba(0, 0, 0, 1)';
+    
+    // 左侧圆盘遮罩
+    ctxP.beginPath();
+    ctxP.moveTo(450, 450);
+    ctxP.arc(450, 450, radius, 
+        (angle + sectorAngle/2) * Math.PI/180, 
+        (angle - sectorAngle/2 + 360) * Math.PI/180);
+    ctxP.lineTo(450, 450);
+    ctxP.fill();
+    
+    // 右侧圆盘遮罩
+    ctxP.beginPath();
+    ctxP.moveTo(1350, 450);
+    ctxP.arc(1350, 450, radius,
+        (angle + sectorAngle/2) * Math.PI/180,
+        (angle - sectorAngle/2 + 360) * Math.PI/180);
+    ctxP.lineTo(1350, 450);
+    ctxP.fill();
+}
+
+// 添加光标跟效果
+const cursor = document.getElementById('cursor');
+const canvasContainer = document.querySelector('.canvas-container');
+
+canvasContainer.addEventListener('mousemove', (e) => {
+    cursor.style.display = 'block';
+    cursor.style.left = e.clientX - canvasContainer.getBoundingClientRect().left + 'px';
+    cursor.style.top = e.clientY - canvasContainer.getBoundingClientRect().top + 'px';
+});
+
+canvasContainer.addEventListener('mouseleave', () => {
+    cursor.style.display = 'none';
+});
+
+// 在点击时添加动画效果
+canvasContainer.addEventListener('mousedown', () => {
+    cursor.style.border = '2px solid #ffff00'; // 点击时变黄
+});
+
+canvasContainer.addEventListener('mouseup', () => {
+    cursor.style.border = '2px solid #fff'; // 恢复白色
+});
+
+// 修改结果框的绘制，使用圆形
+function drawResultBoxes(clickX, clickY, isCorrect) {
+    const radius = 10; // 圆形标记的半径
+    
+    // 绘制点击位置的圆形
+    ctxP.lineWidth = 3;
+    ctxP.strokeStyle = isCorrect ? '#00ff00' : '#ff0000';  // 绿色或红色
+    
+    // 左侧圆盘
+    ctxP.beginPath();
+    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+    ctxP.stroke();
+    
+    // 右侧圆盘
+    ctxP.beginPath();
+    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+    ctxP.stroke();
+    
+    // 如果点击错误，显示正确位置的黄色圆形
+    if (!isCorrect) {
+        ctxP.strokeStyle = '#ffff00';  // 黄色
+        // 左侧圆盘
+        ctxP.beginPath();
+        ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.stroke();
+        
+        // 右侧圆盘
+        ctxP.beginPath();
+        ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.stroke();
+    }
+}
+
+// 修改检查点击位置的函数
+function checkClickedPoint(x, y) {
+    const targetX = point[hide][0];
+    const targetY = point[hide][1];
+    const tolerance = 10; // 允许的误差范围
+    
+    // 计算点击位置到目标点的距离
+    const distance = Math.sqrt(
+        Math.pow(x - targetX, 2) + 
+        Math.pow(y - targetY, 2)
+    );
+    
+    // 如果距离在容错范围内则判定为命中
+    return distance <= tolerance;
+}
+
+// 修改结果显示函数，使用与光标相同大小的圆形
+function drawResultCircles(clickX, clickY, isCorrect) {
+    const radius = 15; // 增加了0.5倍从10改为15
+    
+    // 清除布并显示所有点
+    ctxP.clearRect(0, 0, 1800, 900);
+    ctxP.putImageData(pointData1, 0, 0);
+    ctxP.putImageData(pointData2, 900, 0);
+    
+    // 设置圆圈样式
+    ctxP.lineWidth = 3; // 可以增加宽使圆圈更明显
+    
+    // 绘制点击位置的圆形（红色或绿色）
+    ctxP.strokeStyle = isCorrect ? '#00ff00' : '#ff0000';
+    
+    // 左侧圆盘点击位置
+    ctxP.beginPath();
+    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+    ctxP.stroke();
+    
+    // 右侧圆盘点击位置
+    ctxP.beginPath();
+    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+    ctxP.stroke();
+    
+    // 如果点击错误，显示正确位置（黄色圆圈）
+    if (!isCorrect) {
+        ctxP.strokeStyle = '#ffff00';
+        
+        // 左侧圆盘正确位置
+        ctxP.beginPath();
+        ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.stroke();
+        
+        // 右侧圆盘正确位置
+        ctxP.beginPath();
+        ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.stroke();
+    }
+    
+    // 最后重新绘制刻度和扫描线
+    drawScaleNumbers(ctxP, 450, 450);
+    drawScaleNumbers(ctxP, 1350, 450);
+    drawArc(ctxP, 450, 450, currentAngle);
+    drawArc(ctxP, 1350, 450, currentAngle);
+}
+
+// 修改点击事件处理，确保正确的坐标计算
+canvasP.addEventListener('click', function(event) {
+    if (!isScanning && tips.value == "请在显示区域内选择差异点") {
+        const rect = this.getBoundingClientRect();
+        const scaleX = this.width / rect.width;
+        const scaleY = this.height / rect.height;
+        
+        const canvasX = (event.clientX - rect.left) * scaleX;
+        const canvasY = (event.clientY - rect.top) * scaleY;
+        
+        let clickX = canvasX > 900 ? canvasX - 1350 : canvasX - 450;
+        let clickY = canvasY - 450;
+        
+        console.log('Click coordinates:', clickX, clickY); // 试信息
+        console.log('Target coordinates:', point[hide][0], point[hide][1]); // 调试信息
+        
+        let isCorrect = checkClickedPoint(clickX, clickY);
+        drawResultCircles(clickX, clickY, isCorrect);
+        tips.value = "游戏结束，点击重新开始";
+        btRetry.removeAttribute('disabled');
+    }
+});
+
+// 添判断点是否在雷达区域内的函数
+function isInRadarArea(x, y, centerX, centerY) {
+    const radius = 385; // 雷达半径
+    const dx = x - centerX;
+    const dy = y - centerY;
+    return (dx * dx + dy * dy) <= radius * radius;
+}
+
+// 更新教程文本
+document.querySelector('#message').value = `
+声明：
+    本项目基于开源项目二次开发，仅供学习，请遵循相关开源协议。使用ctrl+滚轮调整页面大小以适应自己的观察习惯
+
+功能：
+    支持调整随机点数量，可视角度，速度和点大小，调整幅度可为小数，影响程度请自行尝试，使用ctrl+滚轮调整页面大小以适应自己的观察习惯
+
+规则：
+    非彩色点：找到仅存在左边不存在右边的点
+    彩色点：找到左右两边唯一一个颜色不同的点
+
+使用介绍：
+    配置好参数后，点击开始游戏
+    等待生成完成后自动开始扫描
+    点击雷达区域外任意位置可暂停/继续扫描
+    扫描暂停后，点击雷达区域内选择差异点
+    点击开始游戏可重新开始游戏
+    成功显示绿色框，失败则显示红色框，黄色框代表系统显示的正确位置
+    点击教程按钮可显示/隐藏本说明
+
+参数说明：
+    点数量：随机生成的点的数量
+    可视角：扫描区域的角度范围
+    速度：扫描的旋转速度
+    点大小：显示点的大小
+    彩色点：启用后点会随机显示不同颜色
+    雷达线：显示或隐藏刻度线
+`;
+
+// 修改相关提示文本
+if(tips.value == "本次游戏结束，点击开始游戏重新开始") {
+    tips.value = "本次游戏结束，点击开始游戏重新开始";
+}
+</script>
+
+</body>
+</html>
