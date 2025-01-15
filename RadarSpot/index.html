@@ -346,23 +346,49 @@ function drawLine(ctx, x, y) {
     ctx.save();
     ctx.translate(x, y);
     
-    // 绘制刻度标识
-    ctx.font = '14px sans-serif';  /* 移除粗体设置 */
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    // 设置线条颜色为白色，降低透明度
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
     
+    // 绘制同心圆
+    for (var i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+    
+    // 刻度标识
     const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
     
     for (var i = 0; i < 24; i++) {
         const angle = i * 15 - 90;
-        const radian = angle * Math.PI / 180;
-        const x = (radius + 25) * Math.cos(radian);
-        const y = (radius + 25) * Math.sin(radian);
         
         ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate((angle + 90) * Math.PI / 180);
-        ctx.fillText(letters[i], -5, 5);
+        ctx.rotate(angle * Math.PI / 180);
+        
+        // 绘制刻度线
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(radius + 10, 0);
+        ctx.stroke();
+        
+        // 绘制字母
+        ctx.translate(radius + 25, 0);
+        ctx.rotate(-angle * Math.PI / 180);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '16px Arial';
+        ctx.fillText(letters[i], 0, 0);
+        
         ctx.restore();
+    }
+    
+    // 绘制径向线
+    for (var i = 0; i < 6; i++) {
+        ctx.rotate(Math.PI * 30 / 180);
+        ctx.moveTo(-385, 0);
+        ctx.lineTo(385, 0);
+        ctx.stroke();
     }
     
     ctx.restore();
@@ -428,6 +454,36 @@ function drawLine(ctx, x, y) {
 .control-panel input[type="text"] {
     cursor: text !important;
 }
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(147, 112, 219, 0.8),
+            0 0 30px rgba(106, 90, 205, 0.6);
+    }
+    to {
+        text-shadow: 
+            0 0 15px rgba(255, 255, 255, 0.7),
+            0 0 25px rgba(147, 112, 219, 0.9),
+            0 0 35px rgba(106, 90, 205, 0.8);
+    }
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
 </style>
 <style id="__web-inspector-hide-shortcut-style__">
 .__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after
@@ -439,7 +495,104 @@ function drawLine(ctx, x, y) {
 
 <body>
 <div class="container">
-    <h1>雷达探点Pro【AIGC_3D视觉实验室】</h1>
+    <h1 style="
+        display: block;
+        text-align: center;
+        margin-bottom: 30px;
+        color: white;
+        font-size: 36px;
+        letter-spacing: 2px;
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(147, 112, 219, 0.8),
+            0 0 30px rgba(106, 90, 205, 0.6);
+        position: relative;
+        z-index: 1;
+        animation: titleGlow 2s ease-in-out infinite alternate;
+    ">雷达探点Pro</h1>
+    
+    <!-- 添加初始画面 -->
+    <div id="startScreen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #8B53FF, #4B0082);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        cursor: default;
+    ">
+        <!-- 添加六边形背景图案 -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px),
+                            repeating-linear-gradient(-60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px);
+            opacity: 0.3;
+            pointer-events: none;
+        "></div>
+        <div style="
+            text-align: center;
+            position: relative;
+            padding: 40px;
+            margin: 20px;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        ">
+            <h1 style="
+                font-size: 64px;
+                margin-bottom: 10px;
+                color: white;
+                font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.5),
+                    0 0 20px rgba(147, 112, 219, 0.8),
+                    0 0 30px rgba(106, 90, 205, 0.6);
+                font-weight: bold;
+                letter-spacing: 3px;
+                position: relative;
+                display: inline-block;
+                padding: 0;
+                border-radius: 20px;
+                animation: titleFloat 3s ease-in-out infinite;
+            ">雷达探点Pro</h1>
+            <h2 style="
+                font-size: 28px;
+                margin: 0;
+                color: white;
+                font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+                letter-spacing: 2px;
+                margin-top: -20px;
+            ">AIGC_3D视觉实验室</h2>
+            <button id="startGameBtn" style="
+                padding: 20px 60px;
+                font-size: 24px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 30px;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin: 0;
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(5px);
+                position: relative;
+                overflow: hidden;
+                letter-spacing: 2px;
+            ">进入游戏</button>
+        </div>
+    </div>
     
     <div class="control-panel">
         <div class="control-group">
@@ -473,6 +626,20 @@ function drawLine(ctx, x, y) {
             <button id='btRetry'>开始游戏</button>
             <button id='btMessage'>使用教程</button>
             <input id='tips' value='等待开始' readonly>
+            <input id='timer' value='00:00:000' readonly style="
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                padding: 10px 15px;
+                color: rgba(255, 255, 255, 0.9);
+                width: 120px;
+                font-family: monospace;
+                font-size: 16px;
+                text-align: center;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            ">
         </div>
     </div>
 
@@ -527,8 +694,14 @@ var btRetry, btMessage;
 var raf, find = false;
 var ts, te;
 var scanning = true; // 添加扫描状态变量
+var timerInterval;
 
 window.onload = function(){
+    // 添加开始游戏按钮的事件监听
+    document.getElementById('startGameBtn').addEventListener('click', function() {
+        document.getElementById('startScreen').style.display = 'none';
+    });
+    
     btRetry = document.querySelector('#btRetry');
     btMessage = document.querySelector('#btMessage');
     canvasL = document.querySelector('#canvasL');
@@ -639,18 +812,21 @@ window.onload = function(){
             let clickX = x - centerX;
             let clickY = y - 450;
             
+            // 在检查点击位置之前停止计时器
+            stopTimer();
+            const finalTime = document.getElementById('timer').value;
+            
             let isCorrect = checkClickedPoint(clickX, clickY);
             drawResultCircles(clickX, clickY, isCorrect);
             
             tips.value = "本次游戏结束，点击开始游戏重新开始";
-            btRetry.removeAttribute('disabled'); // 确保再试一次按钮被激活
+            btRetry.removeAttribute('disabled');
             find = false;
-            te = new Date().getTime();
             
             if (isCorrect) {
-                alert('找到了！\n用时：' + (te-ts) + ' 毫秒');
+                alert(`找到了！\n用时：${finalTime}`);
             } else {
-                alert('找到！\n用时：' + (te-ts) + ' 毫秒');
+                alert(`未找到！\n用时：${finalTime}`);
             }
         }
     });
@@ -742,6 +918,9 @@ function main(){
                     if (k < document.querySelector('#pointNum').value * 1) {
                         tips.value = `由于空间限制，仅生成了 ${k} 个点`;
                     }
+                    // 重置并启动计时器
+                    document.getElementById('timer').value = '00:00:000';
+                    startTimer();
                     resolve();
                 }
             }, 30);
@@ -755,7 +934,10 @@ function drawLine(ctx, x, y) {
     ctx.save();
     ctx.translate(x, y);
     
-    // 绘制心圆
+    // 设置线条颜色为白色，降低透明度
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    
+    // 绘制同心圆
     for (var i = 0; i < 4; i++) {
         ctx.beginPath();
         ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
@@ -771,19 +953,19 @@ function drawLine(ctx, x, y) {
         ctx.save();
         ctx.rotate(angle * Math.PI / 180);
         
-        // 绘制度线
+        // 绘制刻度线
         ctx.beginPath();
         ctx.moveTo(radius, 0);
         ctx.lineTo(radius + 10, 0);
         ctx.stroke();
         
-        // 调字母位置
-        ctx.translate(radius + 25, 0);  // 从55改为25
+        // 绘制字母
+        ctx.translate(radius + 25, 0);
         ctx.rotate(-angle * Math.PI / 180);
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.font = 'bold 18px Arial';
+        ctx.font = '16px Arial';
         ctx.fillText(letters[i], 0, 0);
         
         ctx.restore();
@@ -833,18 +1015,28 @@ function drawCircle(ctx,x,y,Radius,c){
     ctx.closePath();
     ctx.fill();
 }
-function drawArc(ctx, x,y, ang){
-    ctx.fillStyle = '#000';
+function drawArc(ctx, x, y, ang) {
+    // 创建渐变
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
+    gradient.addColorStop(0, '#9370DB');  // 浅紫色
+    gradient.addColorStop(1, '#6A5ACD');  // 深紫色
+    ctx.fillStyle = gradient;
+    
     ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.arc(x,y, radius+10, Math.PI * ang/180, Math.PI * (360-angle + ang)/180);
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, radius + 10, Math.PI * ang/180, Math.PI * (360-angle + ang)/180);
     ctx.fill();
 }
-function endDrawArc(ctx, x,y, ang){
-    ctx.fillStyle = '#000';
+function endDrawArc(ctx, x, y, ang) {
+    // 创建渐变
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
+    gradient.addColorStop(0, '#9370DB');  // 浅紫色
+    gradient.addColorStop(1, '#6A5ACD');  // 深紫色
+    ctx.fillStyle = gradient;
+    
     ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.arc(x,y, radius+10, Math.PI * (ang+angle/2)/180, Math.PI * (360-angle/2 + ang)/180);
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, radius + 10, Math.PI * (ang + angle/2)/180, Math.PI * (360-angle/2 + ang)/180);
     ctx.fill();
 }
 function checkPoint(x, y) {
@@ -1069,7 +1261,8 @@ function drawResultBoxes(clickX, clickY, isCorrect) {
 function checkClickedPoint(x, y) {
     const targetX = point[hide][0];
     const targetY = point[hide][1];
-    const tolerance = 10; // 允许的误差范围
+    // 根据点大小动态调整容差范围，但设置最小值
+    const tolerance = Math.max(pointSize * 2, 15); // 至少15像素的容差
     
     // 计算点击位置到目标点的距离
     const distance = Math.sqrt(
@@ -1083,45 +1276,143 @@ function checkClickedPoint(x, y) {
 
 // 修改结果显示函数，使用与光标相同大小的圆形
 function drawResultCircles(clickX, clickY, isCorrect) {
-    const radius = 15; // 增加了0.5倍从10改为15
+    const radius = 15;
     
-    // 清除布并显示所有点
+    // 清除画布并显示所有点
     ctxP.clearRect(0, 0, 1800, 900);
     ctxP.putImageData(pointData1, 0, 0);
     ctxP.putImageData(pointData2, 900, 0);
     
-    // 设置圆圈样式
-    ctxP.lineWidth = 3; // 可以增加宽使圆圈更明显
+    ctxP.lineWidth = 3;
     
-    // 绘制点击位置的圆形（红色或绿色）
-    ctxP.strokeStyle = isCorrect ? '#00ff00' : '#ff0000';
-    
-    // 左侧圆盘点击位置
-    ctxP.beginPath();
-    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-    ctxP.stroke();
-    
-    // 右侧圆盘点击位置
-    ctxP.beginPath();
-    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-    ctxP.stroke();
-    
-    // 如果点击错误，显示正确位置（黄色圆圈）
-    if (!isCorrect) {
-        ctxP.strokeStyle = '#ffff00';
+    if (isCorrect) {
+        // 绘制成功动画效果
+        let pulseCount = 3;
+        let currentPulse = 0;
         
-        // 左侧圆盘正确位置
-        ctxP.beginPath();
-        ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
-        ctxP.stroke();
+        function drawSuccessEffect() {
+            if (currentPulse >= pulseCount) return;
+            
+            let progress = 0;
+            const animate = () => {
+                if (progress >= 1) {
+                    currentPulse++;
+                    if (currentPulse < pulseCount) {
+                        progress = 0;
+                        requestAnimationFrame(animate);
+                    }
+                    return;
+                }
+                
+                ctxP.clearRect(0, 0, 1800, 900);
+                ctxP.putImageData(pointData1, 0, 0);
+                ctxP.putImageData(pointData2, 900, 0);
+                
+                // 绘制基础圆圈
+                ctxP.strokeStyle = '#00ff00';
+                
+                // 绘制中心圆圈
+                ctxP.beginPath();
+                ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                ctxP.beginPath();
+                ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                
+                // 绘制扩散效果
+                const pulseRadius = radius + (radius * 2 * progress);
+                const alpha = 1 - progress;
+                
+                ctxP.strokeStyle = `rgba(0, 255, 0, ${alpha})`;
+                ctxP.beginPath();
+                ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                ctxP.stroke();
+                ctxP.beginPath();
+                ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                ctxP.stroke();
+                
+                // 重新绘制刻度和扫描线
+                drawScaleNumbers(ctxP, 450, 450);
+                drawScaleNumbers(ctxP, 1350, 450);
+                
+                progress += 0.03;
+                requestAnimationFrame(animate);
+            }
+            
+            requestAnimationFrame(animate);
+        }
         
-        // 右侧圆盘正确位置
-        ctxP.beginPath();
-        ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
-        ctxP.stroke();
+        drawSuccessEffect();
+    } else {
+        // 绘制错误动画效果
+        let pulseCount = 3;
+        let currentPulse = 0;
+        
+        function drawErrorEffect() {
+            if (currentPulse >= pulseCount) return;
+            
+            let progress = 0;
+            const animate = () => {
+                if (progress >= 1) {
+                    currentPulse++;
+                    if (currentPulse < pulseCount) {
+                        progress = 0;
+                        requestAnimationFrame(animate);
+                    }
+                    return;
+                }
+                
+                ctxP.clearRect(0, 0, 1800, 900);
+                ctxP.putImageData(pointData1, 0, 0);
+                ctxP.putImageData(pointData2, 900, 0);
+                
+                // 绘制错误点击位置
+                ctxP.strokeStyle = '#ff0000';
+                
+                // 绘制中心圆圈
+                ctxP.beginPath();
+                ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                ctxP.beginPath();
+                ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                
+                // 绘制错误点的扩散效果
+                const pulseRadius = radius + (radius * 2 * progress);
+                const alpha = 1 - progress;
+                
+                ctxP.strokeStyle = `rgba(255, 0, 0, ${alpha})`;
+                ctxP.beginPath();
+                ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                ctxP.stroke();
+                ctxP.beginPath();
+                ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                ctxP.stroke();
+                
+                // 显示正确位置（黄色标记）
+                ctxP.strokeStyle = '#ffff00';
+                ctxP.beginPath();
+                ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                ctxP.beginPath();
+                ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+                ctxP.stroke();
+                
+                // 重新绘制刻度和扫描线
+                drawScaleNumbers(ctxP, 450, 450);
+                drawScaleNumbers(ctxP, 1350, 450);
+                
+                progress += 0.03;
+                requestAnimationFrame(animate);
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        drawErrorEffect();
     }
     
-    // 最后重新绘制刻度和扫描线
+    // 重新绘制刻度和扫描线
     drawScaleNumbers(ctxP, 450, 450);
     drawScaleNumbers(ctxP, 1350, 450);
     drawArc(ctxP, 450, 450, currentAngle);
@@ -1196,7 +1487,42 @@ document.querySelector('#message').value = `
 if(tips.value == "本次游戏结束，点击开始游戏重新开始") {
     tips.value = "本次游戏结束，点击开始游戏重新开始";
 }
+
+function startTimer() {
+    const startTime = Date.now();
+    const timerElement = document.getElementById('timer');
+    
+    timerInterval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        const minutes = Math.floor(elapsedTime / 60000);
+        const seconds = Math.floor((elapsedTime % 60000) / 1000);
+        const milliseconds = elapsedTime % 1000;
+        
+        timerElement.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+    }, 10); // 更新频率设为10毫秒以确保显示的平滑性
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
+// 修改 btRetry 的点击事件处理
+btRetry.addEventListener('click', function(){
+    // ... 现有代码 ...
+    
+    // 停止之前的计时器（如果存在）
+    stopTimer();
+    // 重置计时器显示
+    document.getElementById('timer').value = '00:00:000';
+    
+    // ... 现有代码 ...
+});
 </script>
+
+<!-- 添加版权信息 -->
+<div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5); font-size: 14px; position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.2);">
+    © 2024-2025 AIGC_3D视觉实验室. All Rights Reserved.
+</div>
 
 </body>
 </html>
