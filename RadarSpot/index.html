@@ -334,64 +334,11 @@ label {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-/* 修改刻度标识字母样式 */
+/* 移除JavaScript函数误放入CSS的部分 */
 .scale-letters {
-    font-weight: normal;  /* 移除粗体 */
-    fill: rgba(255, 255, 255, 0.7);  /* 使用半透明白色 */
+    font-weight: normal;
+    fill: rgba(255, 255, 255, 0.7);
     font-size: 14px;
-}
-
-/* 修改绘制刻度标识的函数中的字体样式 */
-function drawLine(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    
-    // 设置线条颜色为白色，降低透明度
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    
-    // 绘制同心圆
-    for (var i = 0; i < 4; i++) {
-        ctx.beginPath();
-        ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
-    
-    // 刻度标识
-    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
-    
-    for (var i = 0; i < 24; i++) {
-        const angle = i * 15 - 90;
-        
-        ctx.save();
-        ctx.rotate(angle * Math.PI / 180);
-        
-        // 绘制刻度线
-        ctx.beginPath();
-        ctx.moveTo(radius, 0);
-        ctx.lineTo(radius + 10, 0);
-        ctx.stroke();
-        
-        // 绘制字母
-        ctx.translate(radius + 25, 0);
-        ctx.rotate(-angle * Math.PI / 180);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.font = '16px Arial';
-        ctx.fillText(letters[i], 0, 0);
-        
-        ctx.restore();
-    }
-    
-    // 绘制径向线
-    for (var i = 0; i < 6; i++) {
-        ctx.rotate(Math.PI * 30 / 180);
-        ctx.moveTo(-385, 0);
-        ctx.lineTo(385, 0);
-        ctx.stroke();
-    }
-    
-    ctx.restore();
 }
 
 /* 专门针对彩色点和雷达线的复选框 */
@@ -484,6 +431,34 @@ function drawLine(ctx, x, y) {
         opacity: 0;
     }
 }
+
+/* 添加移动设备检测样式 */
+#mobile-warning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    z-index: 9999;
+    padding: 20px;
+    text-align: center;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+@media screen and (max-width: 768px) {
+    #mobile-warning {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #content-wrapper {
+        display: none;
+    }
+}
 </style>
 <style id="__web-inspector-hide-shortcut-style__">
 .__web-inspector-hide-shortcut__, .__web-inspector-hide-shortcut__ *, .__web-inspector-hidebefore-shortcut__::before, .__web-inspector-hideafter-shortcut__::after
@@ -494,162 +469,173 @@ function drawLine(ctx, x, y) {
 </head>
 
 <body>
-<div class="container">
-    <h1 style="
-        display: block;
-        text-align: center;
-        margin-bottom: 30px;
-        color: white;
-        font-size: 36px;
-        letter-spacing: 2px;
-        text-shadow: 
-            0 0 10px rgba(255, 255, 255, 0.5),
-            0 0 20px rgba(147, 112, 219, 0.8),
-            0 0 30px rgba(106, 90, 205, 0.6);
-        position: relative;
-        z-index: 1;
-        animation: titleGlow 2s ease-in-out infinite alternate;
-    ">雷达探点Pro</h1>
+    <!-- 添加移动设备提示 -->
+    <div id="mobile-warning">
+        <div>
+            <h2>请使用电脑访问</h2>
+            <p>为了确保最佳使用体验，本网站暂不支持移动设备访问。</p>
+            <p>请使用桌面电脑或笔记本电脑访问本网站。</p>
+        </div>
+    </div>
     
-    <!-- 添加初始画面 -->
-    <div id="startScreen" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #8B53FF, #4B0082);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        cursor: default;
-    ">
-        <!-- 添加六边形背景图案 -->
-        <div style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: repeating-linear-gradient(60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px),
-                            repeating-linear-gradient(-60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px);
-            opacity: 0.3;
-            pointer-events: none;
-        "></div>
-        <div style="
-            text-align: center;
-            position: relative;
-            padding: 40px;
-            margin: 20px;
-            cursor: default;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 60px;
-        ">
+    <!-- 将原有内容包裹起来 -->
+    <div id="content-wrapper">
+        <div class="container">
             <h1 style="
-                font-size: 64px;
-                margin-bottom: 10px;
+                display: block;
+                text-align: center;
+                margin-bottom: 30px;
                 color: white;
-                font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                font-size: 36px;
+                letter-spacing: 2px;
                 text-shadow: 
                     0 0 10px rgba(255, 255, 255, 0.5),
                     0 0 20px rgba(147, 112, 219, 0.8),
                     0 0 30px rgba(106, 90, 205, 0.6);
-                font-weight: bold;
-                letter-spacing: 3px;
                 position: relative;
-                display: inline-block;
-                padding: 0;
-                border-radius: 20px;
-                animation: titleFloat 3s ease-in-out infinite;
+                z-index: 1;
+                animation: titleGlow 2s ease-in-out infinite alternate;
             ">雷达探点Pro</h1>
-            <h2 style="
-                font-size: 28px;
-                margin: 0;
-                color: white;
-                font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-                letter-spacing: 2px;
-                margin-top: -20px;
-            ">AIGC_3D视觉实验室</h2>
-            <button id="startGameBtn" style="
-                padding: 20px 60px;
-                font-size: 24px;
-                background: rgba(255, 255, 255, 0.1);
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                border-radius: 30px;
-                color: white;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                margin: 0;
-                text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-                backdrop-filter: blur(5px);
-                position: relative;
-                overflow: hidden;
-                letter-spacing: 2px;
-            ">进入游戏</button>
-        </div>
-    </div>
-    
-    <div class="control-panel">
-        <div class="control-group">
-            <div class="control-item">
-                <label>点数量：</label>
-                <input type='text' id='pointNum' value="200">
-            </div>
-            <div class="control-item">
-                <label>可视角：</label>
-                <input type='text' id='angle' value="90">
-            </div>
-            <div class="control-item">
-                <label>速度：</label>
-                <input type='text' id='speed' value="0.5">
-            </div>
-            <div class="control-item">
-                <label>点大小：</label>
-                <input type='text' id='pointSize' value="10">
-            </div>
-            <div class="control-item">
-                <label>彩色点：</label>
-                <input type='checkbox' id='colorLength'>
-            </div>
-            <div class="control-item">
-                <label>雷达线：</label>
-                <input type='checkbox' id='gridLine' checked>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <button id='btRetry'>开始游戏</button>
-            <button id='btMessage'>使用教程</button>
-            <input id='tips' value='等待开始' readonly>
-            <input id='timer' value='00:00:000' readonly style="
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
-                padding: 10px 15px;
-                color: rgba(255, 255, 255, 0.9);
-                width: 120px;
-                font-family: monospace;
-                font-size: 16px;
-                text-align: center;
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            
+            <!-- 添加初始画面 -->
+            <div id="startScreen" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #8B53FF, #4B0082);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                cursor: default;
             ">
-        </div>
-    </div>
+                <!-- 添加六边形背景图案 -->
+                <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: repeating-linear-gradient(60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px),
+                                    repeating-linear-gradient(-60deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px);
+                    opacity: 0.3;
+                    pointer-events: none;
+                "></div>
+                <div style="
+                    text-align: center;
+                    position: relative;
+                    padding: 40px;
+                    margin: 20px;
+                    cursor: default;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 60px;
+                ">
+                    <h1 style="
+                        font-size: 64px;
+                        margin-bottom: 10px;
+                        color: white;
+                        font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                        text-shadow: 
+                            0 0 10px rgba(255, 255, 255, 0.5),
+                            0 0 20px rgba(147, 112, 219, 0.8),
+                            0 0 30px rgba(106, 90, 205, 0.6);
+                        font-weight: bold;
+                        letter-spacing: 3px;
+                        position: relative;
+                        display: inline-block;
+                        padding: 0;
+                        border-radius: 20px;
+                        animation: titleFloat 3s ease-in-out infinite;
+                    ">雷达探点Pro</h1>
+                    <h2 style="
+                        font-size: 28px;
+                        margin: 0;
+                        color: white;
+                        font-family: 'Helvetica Neue', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                        text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+                        letter-spacing: 2px;
+                        margin-top: -20px;
+                    ">AIGC_3D视觉实验室</h2>
+                    <button id="startGameBtn" style="
+                        padding: 20px 60px;
+                        font-size: 24px;
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 30px;
+                        color: white;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        margin: 0;
+                        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                        backdrop-filter: blur(5px);
+                        position: relative;
+                        overflow: hidden;
+                        letter-spacing: 2px;
+                    ">进入游戏</button>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="control-group">
+                    <div class="control-item">
+                        <label>点数量：</label>
+                        <input type='text' id='pointNum' value="200">
+                    </div>
+                    <div class="control-item">
+                        <label>可视角：</label>
+                        <input type='text' id='angle' value="90">
+                    </div>
+                    <div class="control-item">
+                        <label>速度：</label>
+                        <input type='text' id='speed' value="0.5">
+                    </div>
+                    <div class="control-item">
+                        <label>点大小：</label>
+                        <input type='text' id='pointSize' value="10">
+                    </div>
+                    <div class="control-item">
+                        <label>彩色点：</label>
+                        <input type='checkbox' id='colorLength'>
+                    </div>
+                    <div class="control-item">
+                        <label>雷达线：</label>
+                        <input type='checkbox' id='gridLine' checked>
+                    </div>
+                </div>
 
-    <div class="canvas-container">
-        <div id="cursor"></div>
-        <canvas id='canvasL' width='1800' height='900'></canvas>
-        <canvas id='canvasP' width='1800' height='900'></canvas>
-    </div>
+                <div class="control-group">
+                    <button id='btRetry'>开始游戏</button>
+                    <button id='btMessage'>使用教程</button>
+                    <input id='tips' value='等待开始' readonly>
+                    <input id='timer' value='00:00:000' readonly style="
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 8px;
+                        padding: 10px 15px;
+                        color: rgba(255, 255, 255, 0.9);
+                        width: 120px;
+                        font-family: monospace;
+                        font-size: 16px;
+                        text-align: center;
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                    ">
+                </div>
+            </div>
 
-    <textarea id='message' readonly>
+            <div class="canvas-container">
+                <div id="cursor"></div>
+                <canvas id='canvasL' width='1800' height='900'></canvas>
+                <canvas id='canvasP' width='1800' height='900'></canvas>
+            </div>
+
+            <textarea id='message' readonly>
 声明：
     本项目由AIGC_3D视觉实验室(AIGC_3D Vision Lab)制作
 
@@ -676,782 +662,783 @@ function drawLine(ctx, x, y) {
     点大小：显示点的大小
     彩色点：启用后点会随机显示不同颜色
     雷达线：显示或隐藏刻度线
+```
+    </textarea>
+            <!-- <p>(x,y)</p> -->
+        </div>
+    </div>
 
-</textarea>
-    <!-- <p>(x,y)</p> -->
-</div>
+    <script type="text/javascript">
+    var canvasL, ctxL, canvasP, ctxP;
+    var pointData1, pointData2;
+    var point = [];
+    var pointSize = 2.5;
+    var pointNum = 10;
+    var hide = 0;
+    var colorLength = 1, color = ['white', 'green', 'blue', 'red', 'yellow']; // purple，此处修改彩色点的其他颜色
+    var speed = 1, angle = 35, ang = 0, radius = 380;
+    var btRetry, btMessage;
+    var raf, find = false;
+    var ts, te;
+    var scanning = true; // 添加扫描状态变量
+    var timerInterval;
 
-<script type="text/javascript">
-var canvasL, ctxL, canvasP, ctxP;
-var pointData1, pointData2;
-var point = [];
-var pointSize = 2.5;
-var pointNum = 10;
-var hide = 0;
-var colorLength = 1, color = ['white', 'green', 'blue', 'red', 'yellow']; // purple，此处修改彩色点的其他颜色
-var speed = 1, angle = 35, ang = 0, radius = 380;
-var btRetry, btMessage;
-var raf, find = false;
-var ts, te;
-var scanning = true; // 添加扫描状态变量
-var timerInterval;
+    window.onload = function(){
+        // 添加开始游戏按钮的事件监听
+        document.getElementById('startGameBtn').addEventListener('click', function() {
+            document.getElementById('startScreen').style.display = 'none';
+        });
+        
+        btRetry = document.querySelector('#btRetry');
+        btMessage = document.querySelector('#btMessage');
+        canvasL = document.querySelector('#canvasL');
+        canvasP = document.querySelector('#canvasP');
+        message = document.querySelector('#message');
+        tips = document.querySelector('#tips');
+        ctxL = canvasL.getContext('2d');
+        ctxP = canvasP.getContext('2d');
 
-window.onload = function(){
-    // 添加开始游戏按钮的事件监听
-    document.getElementById('startGameBtn').addEventListener('click', function() {
-        document.getElementById('startScreen').style.display = 'none';
-    });
-    
-    btRetry = document.querySelector('#btRetry');
-    btMessage = document.querySelector('#btMessage');
-    canvasL = document.querySelector('#canvasL');
-    canvasP = document.querySelector('#canvasP');
-    message = document.querySelector('#message');
-    tips = document.querySelector('#tips');
-    ctxL = canvasL.getContext('2d');
-    ctxP = canvasP.getContext('2d');
-
-    // 修改重新启动按钮的事件处理
-    btRetry.addEventListener('click', function(){
-        // 重置游戏状态
-        scanning = true;
-        find = true;
-        ts = new Date().getTime();
-        ang = 0;
-        
-        // 消当前动画
-        cancelAnimationFrame(raf);
-        
-        // 更新参数，包括彩色点设置
-        pointSize = document.querySelector('#pointSize').value * 1;
-        pointNum = document.querySelector('#pointNum').value * 1;
-        angle = document.querySelector('#angle').value * 1;
-        speed = document.querySelector('#speed').value * 1;
-        colorLength = document.querySelector('#colorLength').checked ? color.length : 1;
-        
-        // 禁用按钮
-        btRetry.setAttribute('disabled', 'disabled');
-        
-        // 更新提示
-        tips.value = "生成中，请稍候...";
-        
-        // 隐藏教程文本
-        message.setAttribute('class', '__web-inspector-hide-shortcut__');
-        message.setAttribute('style', 'height:0px;width:1200px;resize:none;');
-        
-        // 清除画布
-        ctxP.clearRect(0, 0, 1800, 900);
-        ctxL.clearRect(0, 0, 1800, 900);
-        
-        // 重新生成点
-        main().then(() => {
-            // 点生成完成后的回调
-            tips.value = "点击空白区域暂停扫描，次点击选择差异点";
-            canvasP.style.cursor = 'default';
-            
-        // 确保状态正确
+        // 修改重新启动按钮的事件处理
+        btRetry.addEventListener('click', function(){
+            // 重置游戏状态
             scanning = true;
             find = true;
+            ts = new Date().getTime();
+            ang = 0;
             
-            // 立即开始动画
-            animation();
-        }).catch(error => {
-            console.error('Game restart failed:', error);
-            tips.value = "游戏启动失败，请新页面重试";
-            btRetry.removeAttribute('disabled');
-        });
-    });
-
-    // 添加教程按钮的事件处理
-    btMessage.addEventListener('click', function(){
-        if (message.getAttribute('class') === '__web-inspector-hide-shortcut__') {
-            // 显示教程
-            message.removeAttribute('class');
-            message.setAttribute('style', 'height:170px;width:1200px;resize:none;');
-        } else {
-            // 隐藏教程
+            // 消当前动画
+            cancelAnimationFrame(raf);
+            
+            // 更新参数，包括彩色点设置
+            pointSize = document.querySelector('#pointSize').value * 1;
+            pointNum = document.querySelector('#pointNum').value * 1;
+            angle = document.querySelector('#angle').value * 1;
+            speed = document.querySelector('#speed').value * 1;
+            colorLength = document.querySelector('#colorLength').checked ? color.length : 1;
+            
+            // 禁用按钮
+            btRetry.setAttribute('disabled', 'disabled');
+            
+            // 更新提示
+            tips.value = "生成中，请稍候...";
+            
+            // 隐藏教程文本
             message.setAttribute('class', '__web-inspector-hide-shortcut__');
             message.setAttribute('style', 'height:0px;width:1200px;resize:none;');
-        }
-    });
-
-    // 修改点击事件处理，限制只在 canvas 容器内生效
-    document.querySelector('.canvas-container').addEventListener('click', function(event) {
-        if (!find) return;
-        
-        // 获取点击坐标
-        const rect = canvasP.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        
-        // 检查是否点击在雷达区域外
-        const isLeftRadarArea = isInRadarArea(x, y, 450, 450);
-        const isRightRadarArea = isInRadarArea(x - 900, y, 450, 450);
-        
-        if (!isLeftRadarArea && !isRightRadarArea) {
-            // 点击在雷达区域外
-            if (scanning) {
-                // 暂停扫描
-                scanning = false;
-                cancelAnimationFrame(raf);
-                tips.value = "扫描已暂停，点击空白区域继续扫描";
-                btRetry.removeAttribute('disabled');
-            } else {
-                // 继续扫描
-                scanning = true;
-                tips.value = "点击空白区域暂停扫描，再次点击选择差异点";
-                btRetry.setAttribute('disabled', 'disabled');
-                animation();
-            }
-            return;
-        }
-        
-        // 如果点击在雷达区域内且扫描已停止，则进行差异点选择
-        if (!scanning && (isLeftRadarArea || isRightRadarArea)) {
-            let centerX = x > 900 ? 1350 : 450;
-            let clickX = x - centerX;
-            let clickY = y - 450;
             
-            // 在检查点击位置之前停止计时器
-            stopTimer();
-            const finalTime = document.getElementById('timer').value;
-            
-            let isCorrect = checkClickedPoint(clickX, clickY);
-            drawResultCircles(clickX, clickY, isCorrect);
-            
-            tips.value = "本次游戏结束，点击开始游戏重新开始";
-            btRetry.removeAttribute('disabled');
-            find = false;
-            
-            if (isCorrect) {
-                alert(`找到了！\n用时：${finalTime}`);
-            } else {
-                alert(`未找到！\n用时：${finalTime}`);
-            }
-        }
-    });
-
-    // 保留网格线件监听器
-    document.querySelector('#gridLine').addEventListener('change', function() {
-        if (!this.checked) {
+            // 清除画布
+            ctxP.clearRect(0, 0, 1800, 900);
             ctxL.clearRect(0, 0, 1800, 900);
-        } else {
-            drawLine(ctxL, 450, 450);
-            drawLine(ctxL, 1350, 450);
-        }
-    });
-}
-function main(){
-    return new Promise((resolve, reject) => {
-        try {
-            // 计算理论最大可容纳的点数量
-            const availableArea = Math.PI * (radius - pointSize) * (radius - pointSize);
-            const pointArea = Math.PI * (pointSize * 2) * (pointSize * 2); // 考虑间隙
-            const maxPossiblePoints = Math.floor(availableArea / pointArea * 0.7); // 留30%空间作为缓冲
             
-            // 如果设置的点数量超过理论最大值，自动调整
-            if (pointNum > maxPossiblePoints) {
-                console.warn(`点数量 ${pointNum} 超过最大可能值 ${maxPossiblePoints}，已自动调整`);
-                pointNum = maxPossiblePoints;
-                document.querySelector('#pointNum').value = maxPossiblePoints;
+            // 重新生成点
+            main().then(() => {
+                // 点生成完成后的回调
+                tips.value = "本次游戏结束，点击开始游戏重新开始";
+                canvasP.style.cursor = 'default';
+                
+            // 确保状态正确
+                scanning = true;
+                find = true;
+                
+                // 立即开始动画
+                animation();
+            }).catch(error => {
+                console.error('Game restart failed:', error);
+                tips.value = "游戏启动失败，请新页面重试";
+                btRetry.removeAttribute('disabled');
+            });
+        });
+
+        // 添加教程按钮的事件处理
+        btMessage.addEventListener('click', function(){
+            if (message.getAttribute('class') === '__web-inspector-hide-shortcut__') {
+                // 显示教程
+                message.removeAttribute('class');
+                message.setAttribute('style', 'height:170px;width:1200px;resize:none;');
+            } else {
+                // 隐藏教程
+                message.setAttribute('class', '__web-inspector-hide-shortcut__');
+                message.setAttribute('style', 'height:0px;width:1200px;resize:none;');
+            }
+        });
+
+        // 修改点击事件处理，限制只在 canvas 容器内生效
+        document.querySelector('.canvas-container').addEventListener('click', function(event) {
+            if (!find) return;
+            
+            // 获取点击坐标
+            const rect = canvasP.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // 检查是否点击在雷达区域外
+            const isLeftRadarArea = isInRadarArea(x, y, 450, 450);
+            const isRightRadarArea = isInRadarArea(x - 900, y, 450, 450);
+            
+            if (!isLeftRadarArea && !isRightRadarArea) {
+                // 点击在雷达区域外
+                if (scanning) {
+                    // 暂停扫描
+                    scanning = false;
+                    cancelAnimationFrame(raf);
+                    tips.value = "扫描已暂停，点击空白区域继续扫描";
+                    btRetry.removeAttribute('disabled');
+                } else {
+                    // 继续扫描
+                    scanning = true;
+                    tips.value = "点击空白区域暂停扫描，再次点击选择差异点";
+                    btRetry.setAttribute('disabled', 'disabled');
+                    animation();
+                }
+                return;
             }
             
-            // 处理网格线显示
-            if (document.querySelector('#gridLine').checked){
+            // 如果点击在雷达区域内且扫描已停止，则进行差异点选择
+            if (!scanning && (isLeftRadarArea || isRightRadarArea)) {
+                let centerX = x > 900 ? 1350 : 450;
+                let clickX = x - centerX;
+                let clickY = y - 450;
+                
+                // 在检查点击位置之前停止计时器
+                stopTimer();
+                const finalTime = document.getElementById('timer').value;
+                
+                let isCorrect = checkClickedPoint(clickX, clickY);
+                drawResultCircles(clickX, clickY, isCorrect);
+                
+                tips.value = "本次游戏结束，点击开始游戏重新开始";
+                btRetry.removeAttribute('disabled');
+                find = false;
+                
+                if (isCorrect) {
+                    alert(`找到了！\n用时：${finalTime}`);
+                } else {
+                    alert(`未找到！\n用时：${finalTime}`);
+                }
+            }
+        });
+
+        // 保留网格线件监听器
+        document.querySelector('#gridLine').addEventListener('change', function() {
+            if (!this.checked) {
                 ctxL.clearRect(0, 0, 1800, 900);
-                ctxL.strokeStyle = '#345';
-                ctxL.lineWidth = 1;
+            } else {
                 drawLine(ctxL, 450, 450);
                 drawLine(ctxL, 1350, 450);
             }
-            
-            ctxP.clearRect(0, 0, 1800, 900);
-            ctxP.lineWidth = 1;
-            ctxP.strokeStyle = '#ccc';
-            
-            // 更新彩色点设置
-            if (document.querySelector('#colorLength').checked) {
-                colorLength = color.length;
-            } else {
-                colorLength = 1;
-            }
-            
-            var k = 0;
-            point = [];
-            hide = Math.floor(Math.random() * pointNum);
-            
-            var maxAttempts = 1000; // 防止无限循环
-            
-            var draw = setInterval(function(){
-                var attempts = 0;
-                var x, y;
-                
-                for (var i = 0; i < 30 && k < pointNum; i++) {
-                    attempts = 0;
-                    do {
-                        x = Math.floor(Math.random() * radius * 2 - radius);
-                        y = Math.floor(Math.random() * radius * 2 - radius);
-                        attempts++;
-                        
-                        if (attempts > maxAttempts) {
-                            // 如果尝试次数过多，可能是点密度太高，减少剩余点数
-                            console.warn('Could not place all points with desired spacing');
-                            k = pointNum; // 强制结束
-                            break;
-                        }
-                    } while (!checkPoint(x, y) || !isInScanArea(x, y));
-                    
-                    if (attempts <= maxAttempts) {
-                        var c = Math.floor(Math.random() * colorLength);
-                        if (Math.sqrt(x*x + y*y) <= radius - pointSize) {
-                            k++;
-                            drawPoint(ctxP, x, y, c);
-                            point.push([x, y, c]);
-                        }
-                    }
-                }
-                
-                if (k >= pointNum) {
-                    clearInterval(draw);
-                    pointData1 = ctxP.getImageData(0, 0, 900, 900);
-                    pointData2 = ctxP.getImageData(900, 0, 900, 900);
-                    if (k < document.querySelector('#pointNum').value * 1) {
-                        tips.value = `由于空间限制，仅生成了 ${k} 个点`;
-                    }
-                    // 重置并启动计时器
-                    document.getElementById('timer').value = '00:00:000';
-                    startTimer();
-                    resolve();
-                }
-            }, 30);
-            
-        } catch (error) {
-            reject(error);
-        }
-    });
-}
-function drawLine(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    
-    // 设置线条颜色为白色，降低透明度
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    
-    // 绘制同心圆
-    for (var i = 0; i < 4; i++) {
-        ctx.beginPath();
-        ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
-        ctx.stroke();
+        });
     }
-    
-    // 刻度标识
-    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
-    
-    for (var i = 0; i < 24; i++) {
-        const angle = i * 15 - 90;
-        
+    function main(){
+        return new Promise((resolve, reject) => {
+            try {
+                // 计算理论最大可容纳的点数量
+                const availableArea = Math.PI * (radius - pointSize) * (radius - pointSize);
+                const pointArea = Math.PI * (pointSize * 2) * (pointSize * 2); // 考虑间隙
+                const maxPossiblePoints = Math.floor(availableArea / pointArea * 0.7); // 留30%空间作为缓冲
+                
+                // 如果设置的点数量超过理论最大值，自动调整
+                if (pointNum > maxPossiblePoints) {
+                    console.warn(`点数量 ${pointNum} 超过最大可能值 ${maxPossiblePoints}，已自动调整`);
+                    pointNum = maxPossiblePoints;
+                    document.querySelector('#pointNum').value = maxPossiblePoints;
+                }
+                
+                // 处理网格线显示
+                if (document.querySelector('#gridLine').checked){
+                    ctxL.clearRect(0, 0, 1800, 900);
+                    ctxL.strokeStyle = '#345';
+                    ctxL.lineWidth = 1;
+                    drawLine(ctxL, 450, 450);
+                    drawLine(ctxL, 1350, 450);
+                }
+                
+                ctxP.clearRect(0, 0, 1800, 900);
+                ctxP.lineWidth = 1;
+                ctxP.strokeStyle = '#ccc';
+                
+                // 更新彩色点设置
+                if (document.querySelector('#colorLength').checked) {
+                    colorLength = color.length;
+                } else {
+                    colorLength = 1;
+                }
+                
+                var k = 0;
+                point = [];
+                hide = Math.floor(Math.random() * pointNum);
+                
+                var maxAttempts = 1000; // 防止无限循环
+                
+                var draw = setInterval(function(){
+                    var attempts = 0;
+                    var x, y;
+                    
+                    for (var i = 0; i < 30 && k < pointNum; i++) {
+                        attempts = 0;
+                        do {
+                            x = Math.floor(Math.random() * radius * 2 - radius);
+                            y = Math.floor(Math.random() * radius * 2 - radius);
+                            attempts++;
+                            
+                            if (attempts > maxAttempts) {
+                                // 如果尝试次数过多，可能是点密度太高，减少剩余点数
+                                console.warn('Could not place all points with desired spacing');
+                                k = pointNum; // 强制结束
+                                break;
+                            }
+                        } while (!checkPoint(x, y) || !isInScanArea(x, y));
+                        
+                        if (attempts <= maxAttempts) {
+                            var c = Math.floor(Math.random() * colorLength);
+                            if (Math.sqrt(x*x + y*y) <= radius - pointSize) {
+                                k++;
+                                drawPoint(ctxP, x, y, c);
+                                point.push([x, y, c]);
+                            }
+                        }
+                    }
+                    
+                    if (k >= pointNum) {
+                        clearInterval(draw);
+                        pointData1 = ctxP.getImageData(0, 0, 900, 900);
+                        pointData2 = ctxP.getImageData(900, 0, 900, 900);
+                        if (k < document.querySelector('#pointNum').value * 1) {
+                            tips.value = `由于空间限制，仅生成了 ${k} 个点`;
+                        }
+                        // 重置并启动计时器
+                        document.getElementById('timer').value = '00:00:000';
+                        startTimer();
+                        resolve();
+                    }
+                }, 30);
+                
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    function drawLine(ctx, x, y) {
         ctx.save();
-        ctx.rotate(angle * Math.PI / 180);
+        ctx.translate(x, y);
         
-        // 绘制刻度线
-        ctx.beginPath();
-        ctx.moveTo(radius, 0);
-        ctx.lineTo(radius + 10, 0);
-        ctx.stroke();
+        // 设置线条颜色为白色，降低透明度
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         
-        // 绘制字母
-        ctx.translate(radius + 25, 0);
-        ctx.rotate(-angle * Math.PI / 180);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.font = '16px Arial';
-        ctx.fillText(letters[i], 0, 0);
+        // 绘制同心圆
+        for (var i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.arc(0, 0, 85 + i * 100, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+        
+        // 刻度标识
+        const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
+        
+        for (var i = 0; i < 24; i++) {
+            const angle = i * 15 - 90;
+            
+            ctx.save();
+            ctx.rotate(angle * Math.PI / 180);
+            
+            // 绘制刻度线
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(radius + 10, 0);
+            ctx.stroke();
+            
+            // 绘制字母
+            ctx.translate(radius + 25, 0);
+            ctx.rotate(-angle * Math.PI / 180);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '16px Arial';
+            ctx.fillText(letters[i], 0, 0);
+            
+            ctx.restore();
+        }
+        
+        // 绘制径向线
+        for (var i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI * 30 / 180);
+            ctx.moveTo(-385, 0);
+            ctx.lineTo(385, 0);
+            ctx.stroke();
+        }
         
         ctx.restore();
     }
-    
-    // 绘制径向线
-    for (var i = 0; i < 6; i++) {
-        ctx.rotate(Math.PI * 30 / 180);
-        ctx.moveTo(-385, 0);
-        ctx.lineTo(385, 0);
-        ctx.stroke();
-    }
-    
-    ctx.restore();
-}
-function drawPoint(ctx, x, y, c){
-    let tmpc = c;
-    ctx.fillStyle = color[c];
-    
-    // 左侧圆形点
-    ctx.beginPath();
-    ctx.arc(450 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-    ctx.fill();
-    
-    if (hide != point.length) {
-        // 右侧正常点
-        ctx.beginPath();
-        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-        ctx.fill();
-    } else if (document.querySelector('#colorLength').checked) {
-        // 右侧彩色差异点
-        do {
-            tmpc = Math.floor(Math.random() * colorLength);
-        } while (tmpc == c)
-        ctx.fillStyle = color[tmpc];
-        ctx.beginPath();
-        ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-function drawCircle(ctx,x,y,Radius,c){
-    ctx.fillStyle = color[c];
-    ctx.beginPath();
-    ctx.arc(400+x,400+y,Radius,0,Math.PI*2,true);
-    if (hide != point.length)
-        ctx.arc(400+x+850,400+y,Radius,0,Math.PI*2,true);
-    ctx.closePath();
-    ctx.fill();
-}
-function drawArc(ctx, x, y, ang) {
-    // 创建渐变
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
-    gradient.addColorStop(0, '#9370DB');  // 浅紫色
-    gradient.addColorStop(1, '#6A5ACD');  // 深紫色
-    ctx.fillStyle = gradient;
-    
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.arc(x, y, radius + 10, Math.PI * ang/180, Math.PI * (360-angle + ang)/180);
-    ctx.fill();
-}
-function endDrawArc(ctx, x, y, ang) {
-    // 创建渐变
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
-    gradient.addColorStop(0, '#9370DB');  // 浅紫色
-    gradient.addColorStop(1, '#6A5ACD');  // 深紫色
-    ctx.fillStyle = gradient;
-    
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.arc(x, y, radius + 10, Math.PI * (ang + angle/2)/180, Math.PI * (360-angle/2 + ang)/180);
-    ctx.fill();
-}
-function checkPoint(x, y) {
-    // 首先检查点是否在圆内
-    if (Math.sqrt(x*x + y*y) > radius - pointSize) {
-        return false;
-    }
-    
-    // 设置点之间的最小间隙
-    const minGap = pointSize * 2;  // 间隙为点大小的2倍
-    
-    // 检查是否与现有点重叠或太近
-    for (let p of point) {
-        const dx = x - p[0];
-        const dy = y - p[1];
-        const distance = Math.sqrt(dx*dx + dy*dy);
+    function drawPoint(ctx, x, y, c){
+        let tmpc = c;
+        ctx.fillStyle = color[c];
         
-        if (distance < minGap) {
+        // 左侧圆形点
+        ctx.beginPath();
+        ctx.arc(450 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        if (hide != point.length) {
+            // 右侧正常点
+            ctx.beginPath();
+            ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (document.querySelector('#colorLength').checked) {
+            // 右侧彩色差异点
+            do {
+                tmpc = Math.floor(Math.random() * colorLength);
+            } while (tmpc == c)
+            ctx.fillStyle = color[tmpc];
+            ctx.beginPath();
+            ctx.arc(1350 + x, 450 + y, pointSize/2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    function drawCircle(ctx,x,y,Radius,c){
+        ctx.fillStyle = color[c];
+        ctx.beginPath();
+        ctx.arc(400+x,400+y,Radius,0,Math.PI*2,true);
+        if (hide != point.length)
+            ctx.arc(400+x+850,400+y,Radius,0,Math.PI*2,true);
+        ctx.closePath();
+        ctx.fill();
+    }
+    function drawArc(ctx, x, y, ang) {
+        // 创建渐变
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
+        gradient.addColorStop(0, '#9370DB');  // 浅紫色
+        gradient.addColorStop(1, '#6A5ACD');  // 深紫色
+        ctx.fillStyle = gradient;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, radius + 10, Math.PI * ang/180, Math.PI * (360-angle + ang)/180);
+        ctx.fill();
+    }
+    function endDrawArc(ctx, x, y, ang) {
+        // 创建渐变
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius + 10);
+        gradient.addColorStop(0, '#9370DB');  // 浅紫色
+        gradient.addColorStop(1, '#6A5ACD');  // 深紫色
+        ctx.fillStyle = gradient;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, radius + 10, Math.PI * (ang + angle/2)/180, Math.PI * (360-angle/2 + ang)/180);
+        ctx.fill();
+    }
+    function checkPoint(x, y) {
+        // 首先检查点是否在圆内
+        if (Math.sqrt(x*x + y*y) > radius - pointSize) {
             return false;
         }
+        
+        // 设置点之间的最小间隙
+        const minGap = pointSize * 2;  // 间隙为点大小的2倍
+        
+        // 检查是否与现有点重叠或太近
+        for (let p of point) {
+            const dx = x - p[0];
+            const dy = y - p[1];
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            
+            if (distance < minGap) {
+                return false;
+            }
+        }
+        
+        return true;
     }
-    
-    return true;
-}
-function drawScaleNumbers(ctx, x, y) {
-    ctx.save();
-    ctx.translate(x, y);
-    
-    // 创建字母数组 A-X (24个字母，每15度一个)
-    const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
-    
-    // 添加刻度标识 - 每15度一个母
-    for (var i = 0; i < 24; i++) {
-        const angle = i * 15 - 90;
-        
+    function drawScaleNumbers(ctx, x, y) {
         ctx.save();
-        ctx.rotate(angle * Math.PI / 180);
+        ctx.translate(x, y);
         
-        // 将距离从55减小到25
-        ctx.translate(radius + 25, 0);  // 从55改为25
-        ctx.rotate(-angle * Math.PI / 180);
-        ctx.fillStyle = '#fff';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.font = 'bold 18px Arial';
-        ctx.fillText(letters[i], 0, 0);
+        // 创建字母数组 A-X (24个字母，每15度一个)
+        const letters = Array.from({length: 24}, (_, i) => String.fromCharCode(65 + i));
+        
+        // 添加刻度标识 - 每15度一个母
+        for (var i = 0; i < 24; i++) {
+            const angle = i * 15 - 90;
+            
+            ctx.save();
+            ctx.rotate(angle * Math.PI / 180);
+            
+            // 将距离从55减小到25
+            ctx.translate(radius + 25, 0);  // 从55改为25
+            ctx.rotate(-angle * Math.PI / 180);
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText(letters[i], 0, 0);
+            
+            ctx.restore();
+        }
         
         ctx.restore();
     }
-    
-    ctx.restore();
-}
-function animation(){
-    if (!scanning) {
-        cancelAnimationFrame(raf);
-        return;
+    function animation(){
+        if (!scanning) {
+            cancelAnimationFrame(raf);
+            return;
+        }
+        
+        try {
+            ctxP.clearRect(0, 0, 1800, 900);
+            
+            if (pointData1 && pointData2) {
+                ctxP.putImageData(pointData1, 0, 0);
+                ctxP.putImageData(pointData2, 900, 0);
+                
+                drawScaleNumbers(ctxP, 450, 450);
+                drawScaleNumbers(ctxP, 1350, 450);
+                
+                drawArc(ctxP, 450, 450, ang);
+                drawArc(ctxP, 1350, 450, ang);
+                
+                ang += speed;
+                
+                // 确保动画继续
+                if (scanning) {
+                    raf = requestAnimationFrame(animation);
+                }
+            }
+        } catch (error) {
+            console.error('Animation error:', error);
+            scanning = false;
+            cancelAnimationFrame(raf);
+        }
     }
-    
-    try {
+    function marker(){
+        ctxL.strokeStyle = '#345';
+        ctxL.lineWidth = 1;
         ctxP.clearRect(0, 0, 1800, 900);
         
-        if (pointData1 && pointData2) {
-            ctxP.putImageData(pointData1, 0, 0);
-            ctxP.putImageData(pointData2, 900, 0);
-            
-            drawScaleNumbers(ctxP, 450, 450);
-            drawScaleNumbers(ctxP, 1350, 450);
-            
-            drawArc(ctxP, 450, 450, ang);
-            drawArc(ctxP, 1350, 450, ang);
-            
-            ang += speed;
-            
-            // 确保动画继续
-            if (scanning) {
-                raf = requestAnimationFrame(animation);
-            }
+        // 只在网格线选中时绘制网格
+        if (document.querySelector('#gridLine').checked) {
+            drawLine(ctxL, 450,450);
+            drawLine(ctxL, 1350,450);
+        } else {
+            ctxL.clearRect(0,0, 1800,900);
         }
-    } catch (error) {
-        console.error('Animation error:', error);
-        scanning = false;
-        cancelAnimationFrame(raf);
+        
+        ctxP.putImageData(pointData1, 0, 0);
+        ctxP.putImageData(pointData2, 900, 0);
+        find = true;
     }
-}
-function marker(){
-    ctxL.strokeStyle = '#345';
-    ctxL.lineWidth = 1;
-    ctxP.clearRect(0, 0, 1800, 900);
-    
-    // 只在网格线选中时绘制网格
-    if (document.querySelector('#gridLine').checked) {
-        drawLine(ctxL, 450,450);
-        drawLine(ctxL, 1350,450);
-    } else {
-        ctxL.clearRect(0,0, 1800,900);
+    function result(){
+        ctxP.lineWidth = 3;
+        ctxP.putImageData(pointData1, 0,0);
+        ctxP.putImageData(pointData2, 900,0);
+        ctxP.strokeStyle = 'orange';
+        ctxP.strokeRect(point[pointNum][0]+450-10,point[pointNum][1]+450-10, 20,20);
+        ctxP.strokeRect(point[pointNum][0]+1350-10,point[pointNum][1]+450-10, 20,20);
+        ctxP.strokeStyle = 'red';
+        ctxP.strokeRect(point[hide][0]+450-10,point[hide][1]+450-10, 20,20);
+        ctxP.strokeRect(point[hide][0]+1350-10,point[hide][1]+450-10, 20,20);
+        
+        if ( Math.abs(point[hide][0]-point[pointNum][0])<10 && Math.abs(point[hide][1]-point[pointNum][1])<10 ) {
+            alert('找到了！\n' + '用时：' + (te-ts) + ' 毫秒');
+        } else {
+            alert('误！\n' + '用时：' + (te-ts) + ' 毫秒');
+        }
     }
-    
-    ctxP.putImageData(pointData1, 0, 0);
-    ctxP.putImageData(pointData2, 900, 0);
-    find = true;
-}
-function result(){
-    ctxP.lineWidth = 3;
-    ctxP.putImageData(pointData1, 0,0);
-    ctxP.putImageData(pointData2, 900,0);
-    ctxP.strokeStyle = 'orange';
-    ctxP.strokeRect(point[pointNum][0]+450-10,point[pointNum][1]+450-10, 20,20);
-    ctxP.strokeRect(point[pointNum][0]+1350-10,point[pointNum][1]+450-10, 20,20);
-    ctxP.strokeStyle = 'red';
-    ctxP.strokeRect(point[hide][0]+450-10,point[hide][1]+450-10, 20,20);
-    ctxP.strokeRect(point[hide][0]+1350-10,point[hide][1]+450-10, 20,20);
-    
-    if ( Math.abs(point[hide][0]-point[pointNum][0])<10 && Math.abs(point[hide][1]-point[pointNum][1])<10 ) {
-        alert('找到了！\n' + '用时：' + (te-ts) + ' 毫秒');
-    } else {
-        alert('误！\n' + '用时：' + (te-ts) + ' 毫秒');
+    function isInScanArea(x, y) {
+        // 计算点原点的角度（弧度）
+        let angle = Math.atan2(y, x);
+        // 转换为度数
+        let degrees = angle * (180 / Math.PI);
+        // 确保角度为正值
+        if (degrees < 0) {
+            degrees += 360;
+        }
+        
+        // 检查点是否在当前描区域内
+        // 这里以根据需要调整角度范围
+        return true;  // 在开发阶段先返回true后可以根据具体需求改
     }
-}
-function isInScanArea(x, y) {
-    // 计算点原点的角度（弧度）
-    let angle = Math.atan2(y, x);
-    // 转换为度数
-    let degrees = angle * (180 / Math.PI);
-    // 确保角度为正值
-    if (degrees < 0) {
-        degrees += 360;
+    function drawSectorMask(angle) {
+        const sectorAngle = document.querySelector('#angle').value * 1 || 30; // 使用设置的角度值
+        
+        // 先清除整个画布
+        ctxP.clearRect(0, 0, 1800, 900);
+        
+        // 重新绘制所有点
+        ctxP.putImageData(pointData1, 0, 0);
+        ctxP.putImageData(pointData2, 900, 0);
+        
+        // 创建遮罩，遮住所有区域除了扇形
+        ctxP.fillStyle = 'rgba(0, 0, 0, 1)';
+        
+        // 左侧圆盘遮罩
+        ctxP.beginPath();
+        ctxP.moveTo(450, 450);
+        ctxP.arc(450, 450, radius, 
+            (angle + sectorAngle/2) * Math.PI/180, 
+            (angle - sectorAngle/2 + 360) * Math.PI/180);
+        ctxP.lineTo(450, 450);
+        ctxP.fill();
+        
+        // 右侧圆盘遮罩
+        ctxP.beginPath();
+        ctxP.moveTo(1350, 450);
+        ctxP.arc(1350, 450, radius,
+            (angle + sectorAngle/2) * Math.PI/180,
+            (angle - sectorAngle/2 + 360) * Math.PI/180);
+        ctxP.lineTo(1350, 450);
+        ctxP.fill();
     }
-    
-    // 检查点是否在当前描区域内
-    // 这里以根据需要调整角度范围
-    return true;  // 在开发阶段先返回true后可以根据具体需求改
-}
-function drawSectorMask(angle) {
-    const sectorAngle = document.querySelector('#angle').value * 1 || 30; // 使用设置的角度值
-    
-    // 先清除整个画布
-    ctxP.clearRect(0, 0, 1800, 900);
-    
-    // 重新绘制所有点
-    ctxP.putImageData(pointData1, 0, 0);
-    ctxP.putImageData(pointData2, 900, 0);
-    
-    // 创建遮罩，遮住所有区域除了扇形
-    ctxP.fillStyle = 'rgba(0, 0, 0, 1)';
-    
-    // 左侧圆盘遮罩
-    ctxP.beginPath();
-    ctxP.moveTo(450, 450);
-    ctxP.arc(450, 450, radius, 
-        (angle + sectorAngle/2) * Math.PI/180, 
-        (angle - sectorAngle/2 + 360) * Math.PI/180);
-    ctxP.lineTo(450, 450);
-    ctxP.fill();
-    
-    // 右侧圆盘遮罩
-    ctxP.beginPath();
-    ctxP.moveTo(1350, 450);
-    ctxP.arc(1350, 450, radius,
-        (angle + sectorAngle/2) * Math.PI/180,
-        (angle - sectorAngle/2 + 360) * Math.PI/180);
-    ctxP.lineTo(1350, 450);
-    ctxP.fill();
-}
 
-// 添加光标跟效果
-const cursor = document.getElementById('cursor');
-const canvasContainer = document.querySelector('.canvas-container');
+    // 添加光标跟效果
+    const cursor = document.getElementById('cursor');
+    const canvasContainer = document.querySelector('.canvas-container');
 
-canvasContainer.addEventListener('mousemove', (e) => {
-    cursor.style.display = 'block';
-    cursor.style.left = e.clientX - canvasContainer.getBoundingClientRect().left + 'px';
-    cursor.style.top = e.clientY - canvasContainer.getBoundingClientRect().top + 'px';
-});
+    canvasContainer.addEventListener('mousemove', (e) => {
+        cursor.style.display = 'block';
+        cursor.style.left = e.clientX - canvasContainer.getBoundingClientRect().left + 'px';
+        cursor.style.top = e.clientY - canvasContainer.getBoundingClientRect().top + 'px';
+    });
 
-canvasContainer.addEventListener('mouseleave', () => {
-    cursor.style.display = 'none';
-});
+    canvasContainer.addEventListener('mouseleave', () => {
+        cursor.style.display = 'none';
+    });
 
-// 在点击时添加动画效果
-canvasContainer.addEventListener('mousedown', () => {
-    cursor.style.border = '2px solid #ffff00'; // 点击时变黄
-});
+    // 在点击时添加动画效果
+    canvasContainer.addEventListener('mousedown', () => {
+        cursor.style.border = '2px solid #ffff00'; // 点击时变黄
+    });
 
-canvasContainer.addEventListener('mouseup', () => {
-    cursor.style.border = '2px solid #fff'; // 恢复白色
-});
+    canvasContainer.addEventListener('mouseup', () => {
+        cursor.style.border = '2px solid #fff'; // 恢复白色
+    });
 
-// 修改结果框的绘制，使用圆形
-function drawResultBoxes(clickX, clickY, isCorrect) {
-    const radius = 10; // 圆形标记的半径
-    
-    // 绘制点击位置的圆形
-    ctxP.lineWidth = 3;
-    ctxP.strokeStyle = isCorrect ? '#00ff00' : '#ff0000';  // 绿色或红色
-    
-    // 左侧圆盘
-    ctxP.beginPath();
-    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-    ctxP.stroke();
-    
-    // 右侧圆盘
-    ctxP.beginPath();
-    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-    ctxP.stroke();
-    
-    // 如果点击错误，显示正确位置的黄色圆形
-    if (!isCorrect) {
-        ctxP.strokeStyle = '#ffff00';  // 黄色
+    // 修改结果框的绘制，使用圆形
+    function drawResultBoxes(clickX, clickY, isCorrect) {
+        const radius = 10; // 圆形标记的半径
+        
+        // 绘制点击位置的圆形
+        ctxP.lineWidth = 3;
+        ctxP.strokeStyle = isCorrect ? '#00ff00' : '#ff0000';  // 绿色或红色
+        
         // 左侧圆盘
         ctxP.beginPath();
-        ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
         ctxP.stroke();
         
         // 右侧圆盘
         ctxP.beginPath();
-        ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+        ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
         ctxP.stroke();
-    }
-}
-
-// 修改检查点击位置的函数
-function checkClickedPoint(x, y) {
-    const targetX = point[hide][0];
-    const targetY = point[hide][1];
-    // 根据点大小动态调整容差范围，但设置最小值
-    const tolerance = Math.max(pointSize * 2, 15); // 至少15像素的容差
-    
-    // 计算点击位置到目标点的距离
-    const distance = Math.sqrt(
-        Math.pow(x - targetX, 2) + 
-        Math.pow(y - targetY, 2)
-    );
-    
-    // 如果距离在容错范围内则判定为命中
-    return distance <= tolerance;
-}
-
-// 修改结果显示函数，使用与光标相同大小的圆形
-function drawResultCircles(clickX, clickY, isCorrect) {
-    const radius = 15;
-    
-    // 清除画布并显示所有点
-    ctxP.clearRect(0, 0, 1800, 900);
-    ctxP.putImageData(pointData1, 0, 0);
-    ctxP.putImageData(pointData2, 900, 0);
-    
-    ctxP.lineWidth = 3;
-    
-    if (isCorrect) {
-        // 绘制成功动画效果
-        let pulseCount = 3;
-        let currentPulse = 0;
         
-        function drawSuccessEffect() {
-            if (currentPulse >= pulseCount) return;
+        // 如果点击错误，显示正确位置的黄色圆形
+        if (!isCorrect) {
+            ctxP.strokeStyle = '#ffff00';  // 黄色
+            // 左侧圆盘
+            ctxP.beginPath();
+            ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+            ctxP.stroke();
             
-            let progress = 0;
-            const animate = () => {
-                if (progress >= 1) {
-                    currentPulse++;
-                    if (currentPulse < pulseCount) {
-                        progress = 0;
-                        requestAnimationFrame(animate);
+            // 右侧圆盘
+            ctxP.beginPath();
+            ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+            ctxP.stroke();
+        }
+    }
+
+    // 修改检查点击位置的函数
+    function checkClickedPoint(x, y) {
+        const targetX = point[hide][0];
+        const targetY = point[hide][1];
+        // 根据点大小动态调整容差范围，但设置最小值
+        const tolerance = Math.max(pointSize * 2, 15); // 至少15像素的容差
+        
+        // 计算点击位置到目标点的距离
+        const distance = Math.sqrt(
+            Math.pow(x - targetX, 2) + 
+            Math.pow(y - targetY, 2)
+        );
+        
+        // 如果距离在容错范围内则判定为命中
+        return distance <= tolerance;
+    }
+
+    // 修改结果显示函数，使用与光标相同大小的圆形
+    function drawResultCircles(clickX, clickY, isCorrect) {
+        const radius = 15;
+        
+        // 清除画布并显示所有点
+        ctxP.clearRect(0, 0, 1800, 900);
+        ctxP.putImageData(pointData1, 0, 0);
+        ctxP.putImageData(pointData2, 900, 0);
+        
+        ctxP.lineWidth = 3;
+        
+        if (isCorrect) {
+            // 绘制成功动画效果
+            let pulseCount = 3;
+            let currentPulse = 0;
+            
+            function drawSuccessEffect() {
+                if (currentPulse >= pulseCount) return;
+                
+                let progress = 0;
+                const animate = () => {
+                    if (progress >= 1) {
+                        currentPulse++;
+                        if (currentPulse < pulseCount) {
+                            progress = 0;
+                            requestAnimationFrame(animate);
+                        }
+                        return;
                     }
-                    return;
+                    
+                    ctxP.clearRect(0, 0, 1800, 900);
+                    ctxP.putImageData(pointData1, 0, 0);
+                    ctxP.putImageData(pointData2, 900, 0);
+                    
+                    // 绘制基础圆圈
+                    ctxP.strokeStyle = '#00ff00';
+                    
+                    // 绘制中心圆圈
+                    ctxP.beginPath();
+                    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    ctxP.beginPath();
+                    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    
+                    // 绘制扩散效果
+                    const pulseRadius = radius + (radius * 2 * progress);
+                    const alpha = 1 - progress;
+                    
+                    ctxP.strokeStyle = `rgba(0, 255, 0, ${alpha})`;
+                    ctxP.beginPath();
+                    ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    ctxP.beginPath();
+                    ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    
+                    // 重新绘制刻度和扫描线
+                    drawScaleNumbers(ctxP, 450, 450);
+                    drawScaleNumbers(ctxP, 1350, 450);
+                    
+                    progress += 0.03;
+                    requestAnimationFrame(animate);
                 }
                 
-                ctxP.clearRect(0, 0, 1800, 900);
-                ctxP.putImageData(pointData1, 0, 0);
-                ctxP.putImageData(pointData2, 900, 0);
-                
-                // 绘制基础圆圈
-                ctxP.strokeStyle = '#00ff00';
-                
-                // 绘制中心圆圈
-                ctxP.beginPath();
-                ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                ctxP.beginPath();
-                ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                
-                // 绘制扩散效果
-                const pulseRadius = radius + (radius * 2 * progress);
-                const alpha = 1 - progress;
-                
-                ctxP.strokeStyle = `rgba(0, 255, 0, ${alpha})`;
-                ctxP.beginPath();
-                ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
-                ctxP.stroke();
-                ctxP.beginPath();
-                ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
-                ctxP.stroke();
-                
-                // 重新绘制刻度和扫描线
-                drawScaleNumbers(ctxP, 450, 450);
-                drawScaleNumbers(ctxP, 1350, 450);
-                
-                progress += 0.03;
                 requestAnimationFrame(animate);
             }
             
-            requestAnimationFrame(animate);
-        }
-        
-        drawSuccessEffect();
-    } else {
-        // 绘制错误动画效果
-        let pulseCount = 3;
-        let currentPulse = 0;
-        
-        function drawErrorEffect() {
-            if (currentPulse >= pulseCount) return;
+            drawSuccessEffect();
+        } else {
+            // 绘制错误动画效果
+            let pulseCount = 3;
+            let currentPulse = 0;
             
-            let progress = 0;
-            const animate = () => {
-                if (progress >= 1) {
-                    currentPulse++;
-                    if (currentPulse < pulseCount) {
-                        progress = 0;
-                        requestAnimationFrame(animate);
+            function drawErrorEffect() {
+                if (currentPulse >= pulseCount) return;
+                
+                let progress = 0;
+                const animate = () => {
+                    if (progress >= 1) {
+                        currentPulse++;
+                        if (currentPulse < pulseCount) {
+                            progress = 0;
+                            requestAnimationFrame(animate);
+                        }
+                        return;
                     }
-                    return;
+                    
+                    ctxP.clearRect(0, 0, 1800, 900);
+                    ctxP.putImageData(pointData1, 0, 0);
+                    ctxP.putImageData(pointData2, 900, 0);
+                    
+                    // 绘制错误点击位置
+                    ctxP.strokeStyle = '#ff0000';
+                    
+                    // 绘制中心圆圈
+                    ctxP.beginPath();
+                    ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    ctxP.beginPath();
+                    ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    
+                    // 绘制错误点的扩散效果
+                    const pulseRadius = radius + (radius * 2 * progress);
+                    const alpha = 1 - progress;
+                    
+                    ctxP.strokeStyle = `rgba(255, 0, 0, ${alpha})`;
+                    ctxP.beginPath();
+                    ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    ctxP.beginPath();
+                    ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    
+                    // 显示正确位置（黄色标记）
+                    ctxP.strokeStyle = '#ffff00';
+                    ctxP.beginPath();
+                    ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    ctxP.beginPath();
+                    ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
+                    ctxP.stroke();
+                    
+                    // 重新绘制刻度和扫描线
+                    drawScaleNumbers(ctxP, 450, 450);
+                    drawScaleNumbers(ctxP, 1350, 450);
+                    
+                    progress += 0.03;
+                    requestAnimationFrame(animate);
                 }
                 
-                ctxP.clearRect(0, 0, 1800, 900);
-                ctxP.putImageData(pointData1, 0, 0);
-                ctxP.putImageData(pointData2, 900, 0);
-                
-                // 绘制错误点击位置
-                ctxP.strokeStyle = '#ff0000';
-                
-                // 绘制中心圆圈
-                ctxP.beginPath();
-                ctxP.arc(450 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                ctxP.beginPath();
-                ctxP.arc(1350 + clickX, 450 + clickY, radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                
-                // 绘制错误点的扩散效果
-                const pulseRadius = radius + (radius * 2 * progress);
-                const alpha = 1 - progress;
-                
-                ctxP.strokeStyle = `rgba(255, 0, 0, ${alpha})`;
-                ctxP.beginPath();
-                ctxP.arc(450 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
-                ctxP.stroke();
-                ctxP.beginPath();
-                ctxP.arc(1350 + clickX, 450 + clickY, pulseRadius, 0, Math.PI * 2);
-                ctxP.stroke();
-                
-                // 显示正确位置（黄色标记）
-                ctxP.strokeStyle = '#ffff00';
-                ctxP.beginPath();
-                ctxP.arc(450 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                ctxP.beginPath();
-                ctxP.arc(1350 + point[hide][0], 450 + point[hide][1], radius, 0, Math.PI * 2);
-                ctxP.stroke();
-                
-                // 重新绘制刻度和扫描线
-                drawScaleNumbers(ctxP, 450, 450);
-                drawScaleNumbers(ctxP, 1350, 450);
-                
-                progress += 0.03;
                 requestAnimationFrame(animate);
             }
             
-            requestAnimationFrame(animate);
+            drawErrorEffect();
         }
         
-        drawErrorEffect();
+        // 重新绘制刻度和扫描线
+        drawScaleNumbers(ctxP, 450, 450);
+        drawScaleNumbers(ctxP, 1350, 450);
+        drawArc(ctxP, 450, 450, currentAngle);
+        drawArc(ctxP, 1350, 450, currentAngle);
     }
-    
-    // 重新绘制刻度和扫描线
-    drawScaleNumbers(ctxP, 450, 450);
-    drawScaleNumbers(ctxP, 1350, 450);
-    drawArc(ctxP, 450, 450, currentAngle);
-    drawArc(ctxP, 1350, 450, currentAngle);
-}
 
-// 修改点击事件处理，确保正确的坐标计算
-canvasP.addEventListener('click', function(event) {
-    if (!isScanning && tips.value == "请在显示区域内选择差异点") {
-        const rect = this.getBoundingClientRect();
-        const scaleX = this.width / rect.width;
-        const scaleY = this.height / rect.height;
-        
-        const canvasX = (event.clientX - rect.left) * scaleX;
-        const canvasY = (event.clientY - rect.top) * scaleY;
-        
-        let clickX = canvasX > 900 ? canvasX - 1350 : canvasX - 450;
-        let clickY = canvasY - 450;
-        
-        console.log('Click coordinates:', clickX, clickY); // 试信息
-        console.log('Target coordinates:', point[hide][0], point[hide][1]); // 调试信息
-        
-        let isCorrect = checkClickedPoint(clickX, clickY);
-        drawResultCircles(clickX, clickY, isCorrect);
-        tips.value = "游戏结束，点击重新开始";
-        btRetry.removeAttribute('disabled');
+    // 修改点击事件处理，确保正确的坐标计算
+    canvasP.addEventListener('click', function(event) {
+        if (!isScanning && tips.value == "请在显示区域内选择差异点") {
+            const rect = this.getBoundingClientRect();
+            const scaleX = this.width / rect.width;
+            const scaleY = this.height / rect.height;
+            
+            const canvasX = (event.clientX - rect.left) * scaleX;
+            const canvasY = (event.clientY - rect.top) * scaleY;
+            
+            let clickX = canvasX > 900 ? canvasX - 1350 : canvasX - 450;
+            let clickY = canvasY - 450;
+            
+            console.log('Click coordinates:', clickX, clickY); // 试信息
+            console.log('Target coordinates:', point[hide][0], point[hide][1]); // 调试信息
+            
+            let isCorrect = checkClickedPoint(clickX, clickY);
+            drawResultCircles(clickX, clickY, isCorrect);
+            tips.value = "游戏结束，点击重新开始";
+            btRetry.removeAttribute('disabled');
+        }
+    });
+
+    // 添判断点是否在雷达区域内的函数
+    function isInRadarArea(x, y, centerX, centerY) {
+        const radius = 385; // 雷达半径
+        const dx = x - centerX;
+        const dy = y - centerY;
+        return (dx * dx + dy * dy) <= radius * radius;
     }
-});
 
-// 添判断点是否在雷达区域内的函数
-function isInRadarArea(x, y, centerX, centerY) {
-    const radius = 385; // 雷达半径
-    const dx = x - centerX;
-    const dy = y - centerY;
-    return (dx * dx + dy * dy) <= radius * radius;
-}
-
-// 更新教程文本
-document.querySelector('#message').value = `
+    // 更新教程文本
+    document.querySelector('#message').value = `
 声明：
     本项目由AIGC_3D视觉实验室(AIGC_3D Vision Lab)制作
 	
@@ -1483,46 +1470,34 @@ document.querySelector('#message').value = `
     雷达线：显示或隐藏刻度线
 `;
 
-// 修改相关提示文本
-if(tips.value == "本次游戏结束，点击开始游戏重新开始") {
-    tips.value = "本次游戏结束，点击开始游戏重新开始";
-}
+    // 修改相关提示文本
+    if(tips.value == "本次游戏结束，点击开始游戏重新开始") {
+        tips.value = "本次游戏结束，点击开始游戏重新开始";
+    }
 
-function startTimer() {
-    const startTime = Date.now();
-    const timerElement = document.getElementById('timer');
-    
-    timerInterval = setInterval(() => {
-        const elapsedTime = Date.now() - startTime;
-        const minutes = Math.floor(elapsedTime / 60000);
-        const seconds = Math.floor((elapsedTime % 60000) / 1000);
-        const milliseconds = elapsedTime % 1000;
+    function startTimer() {
+        const startTime = Date.now();
+        const timerElement = document.getElementById('timer');
         
-        timerElement.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
-    }, 10); // 更新频率设为10毫秒以确保显示的平滑性
-}
+        timerInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const minutes = Math.floor(elapsedTime / 60000);
+            const seconds = Math.floor((elapsedTime % 60000) / 1000);
+            const milliseconds = elapsedTime % 1000;
+            
+            timerElement.value = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+        }, 10); // 更新频率设为10毫秒以确保显示的平滑性
+    }
 
-function stopTimer() {
-    clearInterval(timerInterval);
-}
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+    </script>
 
-// 修改 btRetry 的点击事件处理
-btRetry.addEventListener('click', function(){
-    // ... 现有代码 ...
-    
-    // 停止之前的计时器（如果存在）
-    stopTimer();
-    // 重置计时器显示
-    document.getElementById('timer').value = '00:00:000';
-    
-    // ... 现有代码 ...
-});
-</script>
-
-<!-- 添加版权信息 -->
-<div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5); font-size: 14px; position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.2);">
-    © 2024-2025 AIGC_3D视觉实验室. All Rights Reserved.
-</div>
+    <!-- 添加版权信息 -->
+    <div style="text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.5); font-size: 14px; position: fixed; bottom: 0; width: 100%; background: rgba(0, 0, 0, 0.2);">
+        © 2024-2025 AIGC_3D视觉实验室. All Rights Reserved.
+    </div>
 
 </body>
 </html>
